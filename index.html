@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xocassey minecraft ebooks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Rajdhani:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0c0403; --ember:#ff5a1f; --gold:#ffb703; --red:#e01e1e;
+  --text:#ffeedd; --muted:#f2c9a8; --card:rgba(20,7,4,.82);
+  --glow:0 0 14px rgba(255,90,31,.55), 0 0 36px rgba(224,30,30,.35);
+  --display:'Orbitron','Segoe UI',Arial,sans-serif;
+  --body:'Rajdhani','Segoe UI',Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--body);font-size:1.15rem;line-height:1.6;color:var(--text);
+  min-height:100vh;
+  background:linear-gradient(180deg,#080202 0%,#170504 55%,#3d0e05 100%) fixed;
+}
+#fire{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.page{position:relative;z-index:1}
+
+/* navbar */
+header{
+  position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;
+  justify-content:space-between;gap:12px;padding:12px 5vw;
+  background:rgba(12,4,3,.88);backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(255,90,31,.55);box-shadow:0 4px 24px rgba(224,30,30,.3);
+}
+.logo{font-family:var(--display);font-weight:800;font-size:1.05rem;color:var(--gold);text-decoration:none;text-shadow:var(--glow)}
+nav{display:flex;gap:10px;flex-wrap:wrap}
+nav a{
+  color:var(--text);text-decoration:none;font-weight:600;padding:6px 14px;border-radius:999px;
+  border:1px solid transparent;transition:border-color .2s,box-shadow .2s,color .2s;
+}
+nav a:hover{color:var(--gold);border-color:var(--ember);box-shadow:var(--glow)}
+.search{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,90,31,.6);border-radius:999px;padding:4px 14px}
+.search input{background:none;border:0;outline:0;color:var(--text);font:inherit;width:min(34vw,200px)}
+.search input::placeholder{color:var(--muted);opacity:.8}
+.search:focus-within{box-shadow:var(--glow)}
+a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+
+main{max-width:1000px;margin:0 auto;padding:0 5vw 80px}
+
+/* hero */
+.hero{text-align:center;padding:70px 0 40px}
+.hero h1.welcome{
+  font-family:var(--display);font-weight:800;font-size:clamp(1.5rem,5vw,2.8rem);line-height:1.25;
+  color:#fff3e0;text-shadow:0 0 10px var(--gold),0 0 28px var(--ember),0 0 56px var(--red);
+  animation:flicker 4s ease-in-out infinite;
+}
+@keyframes flicker{
+  0%,100%{text-shadow:0 0 10px var(--gold),0 0 28px var(--ember),0 0 56px var(--red)}
+  45%{text-shadow:0 0 6px var(--gold),0 0 20px var(--ember),0 0 40px var(--red)}
+  50%{text-shadow:0 0 14px var(--gold),0 0 36px var(--ember),0 0 70px var(--red)}
+}
+.panel{
+  background:var(--card);border:1px solid rgba(255,90,31,.55);border-radius:18px;
+  box-shadow:var(--glow);padding:28px clamp(18px,4vw,36px);margin-top:36px;
+}
+.panel h2{font-family:var(--display);font-size:clamp(1.4rem,4vw,2rem);color:var(--gold);margin-bottom:12px;text-shadow:0 0 12px rgba(255,90,31,.6)}
+.panel p{color:var(--text);max-width:75ch;margin-inline:auto}
+.hero .panel{text-align:center}
+
+/* accounts */
+.accounts h3{font-family:var(--display);font-size:1.15rem;color:var(--gold);margin-bottom:10px}
+.accounts p{margin-bottom:4px}
+.accounts strong{color:var(--gold)}
+.btn{
+  display:inline-block;margin-top:14px;padding:10px 22px;border-radius:999px;text-decoration:none;
+  font-weight:600;color:#1a0502;background:linear-gradient(90deg,var(--gold),var(--ember));
+  box-shadow:var(--glow);transition:transform .2s,box-shadow .2s;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 0 22px var(--gold),0 0 50px var(--red)}
+
+/* players */
+.players-head{text-align:center;margin:56px 0 8px}
+.players-head h2{font-family:var(--display);font-size:clamp(1.3rem,4vw,2rem);color:#fff3e0;text-shadow:0 0 12px var(--ember)}
+.players-head h3{font-family:var(--display);font-size:1.1rem;color:var(--gold);margin-top:14px}
+.players-head p{color:var(--muted)}
+.player{display:grid;grid-template-columns:220px 1fr;gap:26px;align-items:start;margin-top:30px}
+.player img{
+  width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:14px;
+  border:2px solid var(--ember);box-shadow:var(--glow);background:#2a0c06;
+}
+.player h3{font-family:var(--display);font-size:1.5rem;color:var(--gold);text-shadow:0 0 12px rgba(255,90,31,.6)}
+.tag{display:inline-block;margin:4px 0 10px;color:var(--ember);font-weight:600;font-style:italic}
+.player blockquote{margin:14px 0;padding:10px 16px;border-left:4px solid var(--ember);background:rgba(255,90,31,.1);border-radius:0 10px 10px 0;color:var(--muted)}
+.player ul{list-style:none}
+.player ul a{color:var(--gold);font-weight:600}
+.player ul a:hover{color:#fff}
+.empty{display:none;text-align:center;margin-top:30px;color:var(--muted)}
+
+footer{text-align:center;padding:26px 5vw;background:rgba(12,4,3,.9);border-top:1px solid rgba(255,90,31,.55);color:var(--muted)}
+footer strong{color:var(--gold)}
+#top{
+  position:fixed;right:18px;bottom:18px;z-index:30;width:46px;height:46px;border-radius:50%;
+  border:1px solid var(--gold);background:rgba(12,4,3,.9);color:var(--gold);font-size:1.3rem;cursor:pointer;
+  box-shadow:var(--glow);display:none;
+}
+#top.show{display:block}
+
+@media (max-width:700px){
+  .player{grid-template-columns:1fr}
+  .player img{max-width:260px}
+  .search input{width:120px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .hero h1.welcome{animation:none}
+  .btn,nav a{transition:none}
+}
+</style>
+</head>
+<body>
+<canvas id="fire" aria-hidden="true"></canvas>
+
+<div class="page">
+  <header id="home">
+    <a class="logo" href="#home">XOCASSEY 🔥</a>
+    <nav aria-label="Main">
+      <a href="https://xocassey.github.io/minecraft/ebook%20store%20xo%20cassey.html">Ebooks</a>
+      <a href="https://mctiers.com/rankings/overall">PVP Rankings</a>
+    </nav>
+    <label class="search">
+      <span aria-hidden="true">🔎</span>
+      <input id="q" type="search" placeholder="Search players" aria-label="Search players">
+    </label>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1 class="welcome">💎💥💖Welcome to Xocassey Web!💖💥💎</h1>
+      <div class="panel">
+        <h2>💥💖Minecraft💖💥</h2>
+        <p>Minecraft ebooks are the best ebooks for minecraft players. We have a wide variety of ebooks that will help you improve your minecraft skills and knowledge. Whether you’re a beginner or an experienced player, we have something for everyone. Our ebooks cover a wide range of topics, including building, redstone, survival, and more. We also have a section dedicated to minecraft mods and plugins, where you can find the latest and greatest mods to enhance your minecraft experience. So why wait? Start exploring our collection of minecraft ebooks today and take your minecraft skills to the next level!</p>
+      </div>
+    </section>
+
+    <section class="panel accounts" aria-labelledby="acc">
+      <h3 id="acc">My accounts</h3>
+      <p><strong>Minecraft Username:</strong> Netherite_VI</p>
+      <p><strong>Discord:</strong> netherite_vi</p>
+      <a class="btn" href="https://xocassey.github.io/minecraft/server_conquered.html">Server I conquered</a>
+    </section>
+
+    <section id="players">
+      <div class="players-head">
+        <h2>💥MINECRAFT PLAYERS💥</h2>
+        <h3>Top Minecraft Players</h3>
+        <p>Here are some of the top minecraft players in the world:</p>
+      </div>
+
+      <article class="panel player">
+        <img src="https://xocassey.github.io/minecraft/flame%20pvp.jpg" alt="FlameFrags">
+        <div>
+          <h3>#1.FRAMEFRAGS</h3>
+          <span class="tag">(Immortal Demon)</span>
+          <p>known for his pvp skills and his ability to win fights against multiple opponents at once. He is also known for his entertaining commentary and his ability to make even the most mundane minecraft gameplay exciting to watch.</p>
+          <blockquote>“FlameFrags is a popular Minecraft YouTuber known for his Survival Multiplayer (SMP) adventures, PvP challenges, and high-stakes gameplay across various servers.”</blockquote>
+          <ul><li><a href="https://www.youtube.com/@FlameFragsMC">FlameFrags YouTube Channel</a></li></ul>
+        </div>
+      </article>
+
+      <article class="panel player">
+        <img src="https://xocassey.github.io/minecraft/dreammon.jpg" alt="Dream">
+        <div>
+          <h3>#2.DREAM</h3>
+          <span class="tag">(best minecraft speedrunner...)</span>
+          <p>known for his speedrunning skills and his ability to complete minecraft challenges in record time. He is also known for his entertaining commentary and his ability to make even the most mundane minecraft gameplay exciting to watch.</p>
+          <blockquote>“Dream is a popular Minecraft YouTuber and content creator known for his Minecraft Manhunt series, where he attempts to complete the game while being hunted by other players.”</blockquote>
+          <ul><li><a href="https://www.youtube.com/@dream">Dream YouTube Channel</a></li></ul>
+        </div>
+      </article>
+
+      <article class="panel player">
+        <img src="https://xocassey.github.io/minecraft/judelow.jpg" alt="JudeLow">
+        <div>
+          <h3>#3.JUDELOW</h3>
+          <span class="tag">(best trap builder)</span>
+          <p>known for his trap-building skills and his ability to create complex and effective traps that can catch even the most experienced players off guard. He is also known for his entertaining commentary and his ability to make even the most mundane minecraft gameplay exciting to watch.</p>
+          <blockquote>“JudeLow is a popular Minecraft YouTuber and content creator widely recognized as one of the game’s most skilled ‘trappers’. He is known for inventing and utilizing complex, often unknown game mechanics to create inescapable or one-shot traps in various Survival Multiplayer (SMP) servers.”</blockquote>
+          <ul><li><a href="https://www.youtube.com/@JudeLoSasso">JudeLow YouTube Channel</a></li></ul>
+        </div>
+      </article>
+
+      <p class="empty" id="empty">😕 No players found. Try another search.</p>
+    </section>
+  </main>
+
+  <footer>by <strong>Cassey M Davidson</strong></footer>
+</div>
+
+<button id="top" aria-label="Back to top">↑</button>
+
+<script>
+/* ---- flame background ---- */
+(function(){
+  var c=document.getElementById('fire'),x=c.getContext('2d'),W,H,P=[];
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function size(){W=c.width=innerWidth;H=c.height=innerHeight}
+  addEventListener('resize',size);size();
+
+  function spawn(){
+    var ember=Math.random()<.15;
+    P.push({
+      x:Math.random()*W, y:H+20,
+      r:ember?2+Math.random()*3:35+Math.random()*60,
+      vy:ember?2+Math.random()*3.5:1+Math.random()*2.2,
+      vx:(Math.random()-.5)*.8,
+      life:0, max:ember?160+Math.random()*100:70+Math.random()*80,
+      e:ember
+    });
+  }
+  function tick(t){
+    x.globalCompositeOperation='source-over';
+    x.clearRect(0,0,W,H);
+    x.globalCompositeOperation='lighter';
+    var n=Math.ceil(W/320);
+    for(var s=0;s<n;s++)spawn();
+    for(var i=P.length-1;i>=0;i--){
+      var p=P[i];p.life++;p.y-=p.vy;
+      p.x+=p.vx+Math.sin((p.y+t/10)/40)*.6;
+      var k=p.life/p.max;
+      if(k>=1){P.splice(i,1);continue}
+      var r=p.e?p.r:p.r*(1-k*.7);
+      var g=x.createRadialGradient(p.x,p.y,0,p.x,p.y,r);
+      var hue=52-k*50,a=p.e?(1-k)*.9:(1-k)*.2;
+      g.addColorStop(0,'hsla('+hue+',100%,'+(62-k*20)+'%,'+a+')');
+      g.addColorStop(1,'hsla(8,100%,40%,0)');
+      x.fillStyle=g;x.beginPath();x.arc(p.x,p.y,r,0,6.2832);x.fill();
+    }
+  }
+  if(reduce){for(var j=0;j<150;j++)tick(0)}
+  else{(function loop(t){tick(t);requestAnimationFrame(loop)})(0)}
+})();
+
+/* ---- player search ---- */
+(function(){
+  var q=document.getElementById('q'),cards=document.querySelectorAll('.player'),empty=document.getElementById('empty');
+  q.addEventListener('input',function(){
+    var v=q.value.trim().toLowerCase(),shown=0;
+    cards.forEach(function(card){
+      var ok=!v||card.textContent.toLowerCase().indexOf(v)>-1;
+      card.style.display=ok?'':'none';
+      if(ok)shown++;
+    });
+    empty.style.display=shown?'none':'block';
+  });
+})();
+
+/* ---- back to top ---- */
+(function(){
+  var b=document.getElementById('top');
+  addEventListener('scroll',function(){b.classList.toggle('show',scrollY>400)});
+  b.addEventListener('click',function(){scrollTo({top:0})});
+})();
+</script>
+</body>
+</html>
