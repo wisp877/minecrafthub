@@ -1,347 +1,1580 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark scroll-smooth">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Minecraft Hub | Xocassey</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Rajdhani:wght@500;600&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#090707">
+    <meta name="description" content="Minecraft Hub — Explore. Create. Conquer. A dark gaming workspace with a Netherfire look.">
+    <title>Minecraft Hub | Netherfire Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script>
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    rayolla: {
+                        950: "#090707",
+                        900: "#0f172a",
+                        800: "#1e293b",
+                        700: "#334155"
+                    }
+                }
+            }
+        }
+    };
+    </script>
+    <style>
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+        background:
+            radial-gradient(circle at 15% 20%, rgba(6,182,212,.12), transparent 35%),
+            radial-gradient(circle at 85% 30%, rgba(220,38,38,.12), transparent 35%),
+            radial-gradient(circle at 50% 80%, rgba(16,185,129,.08), transparent 40%),
+            #090707;
+        background-attachment: fixed;
+    }
+    ::selection { background: #ff6a00; color: #090707; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #090707; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #ff6a00; }
+
+    @keyframes pulseGlow {
+        0%,100% { box-shadow: 0 0 20px rgba(255,106,0,.20), 0 0 40px rgba(220,38,38,.10); }
+        50% { box-shadow: 0 0 40px rgba(255,106,0,.45), 0 0 80px rgba(220,38,38,.25); }
+    }
+    @keyframes float {
+        0%,100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+    @keyframes scan {
+        from { transform: translateY(-100%); }
+        to { transform: translateY(100vh); }
+    }
+    @keyframes terminalBlink { 50% { opacity: 0; } }
+
+    .glow { animation: pulseGlow 4s infinite; }
+    .float { animation: float 5s ease-in-out infinite; }
+    .scanline {
+        position: fixed; inset: 0; height: 2px;
+        background: rgba(255,106,0,.06);
+        pointer-events: none; z-index: 9999;
+        animation: scan 10s linear infinite;
+    }
+    .glass {
+        background: rgba(15,23,42,.75);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+    }
+    .grid-bg {
+        background-image:
+            linear-gradient(rgba(255,106,0,.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,106,0,.03) 1px, transparent 1px);
+        background-size: 32px 32px;
+    }
+    .code-editor { tab-size: 2; line-height: 1.6; }
+    .app-card { transition: all .3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .app-card:hover {
+        transform: translateY(-8px) scale(1.01);
+        border-color: rgba(255,106,0,.45);
+        box-shadow: 0 20px 50px -10px rgba(255,106,0,.15);
+    }
+    .browser-frame { min-height: 580px; }
+    .toast { transform: translateY(120px); opacity: 0; transition: all .3s ease; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .cursor {
+        display: inline-block; width: 8px; height: 16px;
+        background: #ff6a00; animation: terminalBlink 1s infinite;
+        vertical-align: middle;
+    }
+    </style>
 <style>
-:root{--ember:#ff5a1f;--gold:#ffb703;--red:#e01e1e;--text:#ffeedd;--muted:#f2c9a8;--card:rgba(20,7,4,.84);
---glow:0 0 14px rgba(255,90,31,.55),0 0 36px rgba(224,30,30,.35);
---display:'Orbitron','Segoe UI',Arial,sans-serif;--body:'Rajdhani','Segoe UI',Arial,sans-serif}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:var(--body);font-size:1.15rem;line-height:1.6;color:var(--text);min-height:100vh;background:linear-gradient(180deg,#080202,#170504 55%,#3d0e05) fixed}
-#fire{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
-.page{position:relative;z-index:1}
-a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
-header{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:10px 5vw;background:rgba(12,4,3,.9);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,90,31,.55);box-shadow:0 4px 24px rgba(224,30,30,.3)}
-.logo{font-family:var(--display);font-weight:800;font-size:1.05rem;color:var(--gold);text-decoration:none;text-shadow:var(--glow)}
-nav{display:flex;gap:6px;flex-wrap:wrap}
-nav a{color:var(--text);text-decoration:none;font-weight:600;padding:4px 12px;border-radius:999px;border:1px solid transparent;transition:.2s}
-nav a:hover{color:var(--gold);border-color:var(--ember);box-shadow:var(--glow)}
-.tools-bar{display:flex;gap:8px;align-items:center}
-.search{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.07);border:1px solid rgba(255,90,31,.6);border-radius:999px;padding:3px 12px}
-.search input,.field input{background:none;border:0;outline:0;color:var(--text);font:inherit;width:min(30vw,150px)}
-input::placeholder{color:var(--muted);opacity:.8}
-.chip,.fire-btn{font:inherit;font-weight:600;cursor:pointer;color:var(--gold);background:rgba(255,90,31,.12);border:1px solid var(--ember);border-radius:999px;padding:3px 12px}
-.chip:hover,.fire-btn:hover{box-shadow:var(--glow)}
-main{max-width:1000px;margin:0 auto;padding:0 5vw 90px}
-.hero{text-align:center;padding:64px 0 10px}
-.welcome{font-weight:600;color:var(--muted)}
-.hero h1{font-family:var(--display);font-weight:800;font-size:clamp(2rem,9vw,4.6rem);line-height:1.1;color:#fff3e0;margin:8px 0 14px;text-shadow:0 0 10px var(--gold),0 0 28px var(--ember),0 0 56px var(--red);animation:flicker 4s ease-in-out infinite}
-@keyframes flicker{45%{text-shadow:0 0 6px var(--gold),0 0 20px var(--ember),0 0 40px var(--red)}50%{text-shadow:0 0 14px var(--gold),0 0 38px var(--ember),0 0 74px var(--red)}}
-.btn{display:inline-block;margin:12px 6px 0;padding:10px 22px;border-radius:999px;border:0;font:inherit;font-weight:600;cursor:pointer;text-decoration:none;color:#1a0502;background:linear-gradient(90deg,var(--gold),var(--ember));box-shadow:var(--glow);transition:.2s}
-.btn:hover{transform:translateY(-2px);box-shadow:0 0 22px var(--gold),0 0 50px var(--red)}
-.btn.alt{background:rgba(12,4,3,.7);color:var(--gold);border:1px solid var(--gold)}
-.panel{background:var(--card);border:1px solid rgba(255,90,31,.55);border-radius:18px;box-shadow:var(--glow);padding:26px clamp(18px,4vw,34px);margin-top:30px}
-.panel h2,.panel h3{font-family:var(--display);color:var(--gold);text-shadow:0 0 12px rgba(255,90,31,.6)}
-.panel h2{font-size:clamp(1.3rem,4vw,1.9rem);margin-bottom:10px}
-.panel h3{font-size:1.1rem;margin-bottom:8px}
-.center{text-align:center}.center p{max-width:75ch;margin-inline:auto}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
-.grid .panel{margin-top:30px}
-.sec-title{font-family:var(--display);text-align:center;font-size:clamp(1.3rem,4vw,2rem);color:#fff3e0;text-shadow:0 0 12px var(--ember);margin-top:56px}
-.sub{text-align:center;color:var(--muted)}
-.acct{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
-.acct img{width:110px;height:auto;image-rendering:pixelated;filter:drop-shadow(0 0 12px var(--ember))}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
-.row strong{color:var(--gold)}
-.field{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-.field input{flex:1;min-width:130px;border:1px solid rgba(255,90,31,.6);border-radius:10px;padding:6px 12px;background:rgba(255,255,255,.07)}
-.status{margin-top:12px;color:var(--muted);white-space:pre-line}
-.on{color:#7dff9a}.off{color:#ff8a7a}
-.ebooks{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:20px}
-.ebooks a{display:block;text-decoration:none;color:var(--text);text-align:center;padding:20px 12px;border-radius:14px;background:var(--card);border:1px solid var(--ember);transition:.2s;font-family:var(--display);font-size:.95rem}
-.ebooks a:hover{transform:translateY(-4px);box-shadow:var(--glow);color:var(--gold)}
-.ebooks span{display:block;font-size:2rem;margin-bottom:6px}
-.player{display:grid;grid-template-columns:220px 1fr;gap:26px;align-items:start}
-.player img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;border:2px solid var(--ember);box-shadow:var(--glow);background:#2a0c06}
-.player h3{font-size:1.5rem}
-.tag{display:inline-block;margin:2px 0 10px;color:var(--ember);font-weight:600;font-style:italic}
-blockquote{margin:14px 0;padding:10px 16px;border-left:4px solid var(--ember);background:rgba(255,90,31,.1);border-radius:0 10px 10px 0;color:var(--muted)}
-.player ul{list-style:none}.player a{color:var(--gold);font-weight:600}.player a:hover{color:#fff}
-.empty{display:none;text-align:center;margin-top:30px;color:var(--muted)}
-footer{position:relative;z-index:1;text-align:center;padding:24px 5vw;background:rgba(12,4,3,.92);border-top:1px solid rgba(255,90,31,.55);color:var(--muted)}
-footer strong{color:var(--gold)}
-#top{position:fixed;right:20px;bottom:88px;z-index:30;width:44px;height:44px;border-radius:50%;border:1px solid var(--gold);background:rgba(12,4,3,.92);color:var(--gold);font-size:1.2rem;cursor:pointer;box-shadow:var(--glow);display:none}
-#top.show{display:block}
-/* Netherite AI */
-#aiBtn{position:fixed;right:20px;bottom:20px;z-index:40;border:0;border-radius:999px;padding:12px 18px;font:inherit;font-weight:600;cursor:pointer;color:#fff3e0;background:linear-gradient(135deg,#3a2a30,#150a0c);border:1px solid var(--gold);box-shadow:var(--glow)}
-#ai{position:fixed;right:20px;bottom:76px;z-index:40;width:min(370px,92vw);height:min(480px,70vh);display:none;flex-direction:column;background:#120605;border:1px solid var(--gold);border-radius:16px;box-shadow:0 0 40px rgba(255,90,31,.5);overflow:hidden}
-#ai.open{display:flex}
-.ai-head{padding:12px 14px;background:linear-gradient(90deg,#3a1208,#1a0805);border-bottom:1px solid var(--ember);font-family:var(--display);font-size:.9rem;color:var(--gold)}
-.ai-head small{display:block;font-family:var(--body);color:var(--muted);font-size:.85rem}
-#log{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
-.m{max-width:85%;padding:8px 12px;border-radius:12px;font-size:1rem;line-height:1.4;white-space:pre-line}
-.m.bot{background:rgba(255,90,31,.16);border:1px solid rgba(255,90,31,.5);align-self:flex-start}
-.m.me{background:linear-gradient(90deg,var(--gold),var(--ember));color:#1a0502;align-self:flex-end;font-weight:600}
-.sug{display:flex;gap:6px;flex-wrap:wrap;padding:0 12px 8px}
-.sug .chip{font-size:.85rem}
-.ai-in{display:flex;gap:6px;padding:10px;border-top:1px solid rgba(255,90,31,.5)}
-.ai-in input{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,90,31,.6);border-radius:10px;color:var(--text);font:inherit;padding:6px 10px}
-@media(max-width:700px){.player{grid-template-columns:1fr}.player img{max-width:260px}.search input{width:90px}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hero h1{animation:none}.btn,nav a,.ebooks a{transition:none}}
+
+    /* =========================================================
+       MINECRAFT HUB — DARK GAMING / NETHERFIRE THEME
+       Obsidian surfaces • lava orange • ember red • ancient gold
+       ========================================================= */
+    :root {
+        color-scheme: dark;
+        --nether-bg: #090707;
+        --nether-panel: #17100f;
+        --nether-panel-2: #211311;
+        --nether-orange: #ff6a00;
+        --nether-red: #dc2626;
+        --nether-gold: #fbbf24;
+        --nether-text: #f5f5f4;
+    }
+
+    body {
+        color: var(--nether-text);
+        background:
+            radial-gradient(ellipse at 12% 8%, rgba(255, 80, 0, .18), transparent 32%),
+            radial-gradient(ellipse at 88% 22%, rgba(185, 28, 28, .16), transparent 34%),
+            radial-gradient(ellipse at 50% 100%, rgba(251, 146, 60, .10), transparent 42%),
+            linear-gradient(180deg, #090707 0%, #120b0a 48%, #080606 100%);
+        background-attachment: fixed;
+    }
+
+    ::selection { background: #ff6a00; color: #160806; }
+    ::-webkit-scrollbar-track { background: #090707; }
+    ::-webkit-scrollbar-thumb { background: #7c2d12; border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #ff6a00; }
+
+    .scanline {
+        background: linear-gradient(90deg, transparent, rgba(255,106,0,.14), transparent);
+        height: 3px;
+    }
+
+    .grid-bg {
+        background-image:
+            linear-gradient(rgba(255,106,0,.035) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,106,0,.035) 1px, transparent 1px);
+    }
+
+    .glass {
+        background: rgba(22, 13, 11, .82);
+        border-color: rgba(255, 106, 0, .20);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+    }
+
+    .glow {
+        animation: netherGlow 3.5s ease-in-out infinite;
+    }
+
+    @keyframes netherGlow {
+        0%, 100% { box-shadow: 0 0 14px rgba(255,106,0,.22), 0 0 32px rgba(220,38,38,.10); }
+        50% { box-shadow: 0 0 28px rgba(255,106,0,.48), 0 0 58px rgba(220,38,38,.22); }
+    }
+
+    @keyframes emberRise {
+        0% { transform: translateY(20vh) translateX(0) scale(.5); opacity: 0; }
+        15% { opacity: .8; }
+        85% { opacity: .55; }
+        100% { transform: translateY(-110vh) translateX(35px) scale(1.2); opacity: 0; }
+    }
+
+    body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 1;
+        opacity: .45;
+        background-image:
+            radial-gradient(2px 2px at 12% 85%, rgba(255,166,0,.9) 50%, transparent 100%),
+            radial-gradient(2px 2px at 28% 65%, rgba(255,80,0,.8) 50%, transparent 100%),
+            radial-gradient(3px 3px at 73% 90%, rgba(255,130,0,.7) 50%, transparent 100%),
+            radial-gradient(2px 2px at 90% 70%, rgba(220,38,38,.8) 50%, transparent 100%),
+            radial-gradient(2px 2px at 48% 95%, rgba(255,190,60,.8) 50%, transparent 100%);
+        animation: emberRise 12s linear infinite;
+        mix-blend-mode: screen;
+    }
+
+    header, main, section, footer, #toast, .fixed:not(.scanline) {
+        position: relative;
+    }
+    header { z-index: 50; }
+
+    /* Darken common panels and give them a subtle molten border on hover. */
+    [class*="bg-slate-950"], [class*="bg-slate-900"] {
+        background-color: #120d0c !important;
+    }
+    [class*="bg-slate-800"] { background-color: #241513 !important; }
+    [class*="border-slate-800"], [class*="border-slate-700"] {
+        border-color: rgba(255, 106, 0, .20) !important;
+    }
+    [class*="hover:border-orange-"] {
+        transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
+    }
+    [class*="text-orange-"] { text-shadow: 0 0 14px rgba(255,106,0,.16); }
+
+    /* Keep gradients in the fire palette. */
+    [class*="from-orange-"] { --tw-gradient-from: #ff6a00 var(--tw-gradient-from-position) !important; }
+    [class*="via-orange-"] { --tw-gradient-via: #ff9a1f var(--tw-gradient-via-position) !important; }
+    [class*="to-orange-"] { --tw-gradient-to: #dc2626 var(--tw-gradient-to-position) !important; }
+    [class*="from-red-"] { --tw-gradient-from: #991b1b var(--tw-gradient-from-position) !important; }
+    [class*="to-red-"] { --tw-gradient-to: #ff6a00 var(--tw-gradient-to-position) !important; }
+
+    .app-card:hover {
+        border-color: rgba(255,106,0,.55);
+        box-shadow: 0 20px 50px -10px rgba(255,106,0,.18);
+    }
+
+    button, a, input, textarea, select {
+        accent-color: #ff6a00;
+    }
+    button:focus-visible, a:focus-visible, input:focus-visible,
+    textarea:focus-visible, select:focus-visible {
+        outline: 2px solid #ff8a1f;
+        outline-offset: 3px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: .01ms !important;
+            animation-iteration-count: 1 !important;
+            scroll-behavior: auto !important;
+            transition-duration: .01ms !important;
+        }
+    }
+
 </style>
 </head>
-<body>
-<canvas id="fire" aria-hidden="true"></canvas>
-<div class="page">
-<header id="home">
-  <a class="logo" href="#home">MINECRAFT HUB 🔥</a>
-  <nav aria-label="Main">
-    <a href="#home">Home</a>
-    <a href="https://xocassey.github.io/minecraft/ebook%20store%20xo%20cassey.html">Ebooks</a>
-    <a href="#players">Players</a>
-    <a href="#tools">Tools</a>
-    <a href="https://mctiers.com/rankings/overall">PVP Rankings</a>
-  </nav>
-  <div class="tools-bar">
-    <label class="search"><span aria-hidden="true">🔎</span><input id="q" type="search" placeholder="Search players" aria-label="Search players"></label>
-    <button class="fire-btn" id="fireBtn" aria-label="Change flame intensity">🔥 High</button>
-  </div>
+<body class="text-slate-100 font-sans overflow-x-hidden selection:bg-orange-400 selection:text-slate-950">
+
+<div class="scanline"></div>
+<div class="fixed inset-0 pointer-events-none opacity-40 grid-bg z-0"></div>
+
+<!-- Toast Notification System -->
+<div id="toast" class="toast fixed bottom-6 right-6 z-[9999] bg-slate-900/90 border border-orange-500/40 text-orange-300 px-5 py-3.5 rounded-2xl shadow-2xl backdrop-blur-xl font-mono text-xs flex items-center gap-3">
+    <span class="w-2 h-2 rounded-full bg-orange-400 animate-ping"></span>
+    <span id="toastMessage">System Ready.</span>
+</div>
+
+<!-- NAVIGATION BAR -->
+<header class="fixed top-0 left-0 right-0 z-50 glass border-b border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+        <a href="#home" class="flex items-center gap-3 select-none group">
+            <span class="relative flex h-3.5 w-3.5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-orange-400"></span>
+            </span>
+            <span class="text-2xl font-black tracking-tight bg-gradient-to-r from-orange-400 via-red-400 to-red-500 bg-clip-text text-transparent group-hover:opacity-90 transition">
+                Minecraft<span class="text-white"> Hub</span>
+            </span>
+        </a>
+
+        <nav class="hidden lg:flex items-center gap-7 text-xs font-semibold text-slate-400">
+            <a href="#Home" class="hover:text-orange-400 transition">Home</a>
+            <a href="#About Creator" class="hover:text-orange-400 transition">Tracks</a>
+            <a href="#Live IDE" class="hover:text-orange-400 transition">Live IDE</a>
+            <a href="#Minecraft Tools" class="hover:text-orange-400 transition">Browser</a>
+            <a href="#AI" class="hover:text-orange-400 transition">Apps & MV3</a>
+            <a href="#snippet-vault" class="hover:text-orange-400 transition">Snippets</a>
+            <a href="#terminal-lab" class="hover:text-orange-400 transition">Terminal</a>
+        </nav>
+
+        <div class="flex items-center gap-3">
+            <button onclick="openRayollaSafe()" class="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-300 text-xs font-bold hover:bg-amber-500 hover:text-slate-950 transition">
+                <span>🔐</span> Vault
+            </button>
+            <button onclick="scrollToId('mini-ide')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-orange-400 via-orange-400 to-orange-400 text-slate-950 text-xs font-black shadow-lg shadow-orange-500/20 hover:scale-105 transition">
+                Launch Lab ⚡
+            </button>
+        </div>
+    </div>
 </header>
 
-<main>
-<section class="hero">
-  <p class="welcome">💎💥💖Welcome to Xocassey Web!💖💥💎</p>
-  <h1>Minecraft Hub</h1>
-  <div class="panel center">
-    <h2>💥💖Minecraft💖💥</h2>
-    <p>Minecraft ebooks are the best ebooks for minecraft players. We have a wide variety of ebooks that will help you improve your minecraft skills and knowledge. Whether you’re a beginner or an experienced player, we have something for everyone. Our ebooks cover a wide range of topics, including building, redstone, survival, and more. We also have a section dedicated to minecraft mods and plugins, where you can find the latest and greatest mods to enhance your minecraft experience. So why wait? Start exploring our collection of minecraft ebooks today and take your minecraft skills to the next level!</p>
-    <button class="btn" data-ask>🤖 Ask Netherite AI</button>
-    <a class="btn alt" href="https://xocassey.github.io/minecraft/ebook%20store%20xo%20cassey.html">Browse Ebooks</a>
-  </div>
+<!-- HERO SECTION -->
+<section id="home" class="relative min-h-screen flex items-center justify-center px-6 pt-24 overflow-hidden">
+    <div class="absolute w-[600px] h-[600px] rounded-full bg-orange-500/10 blur-[140px] -left-40 top-20 pointer-events-none"></div>
+    <div class="absolute w-[600px] h-[600px] rounded-full bg-red-500/10 blur-[140px] -right-40 bottom-10 pointer-events-none"></div>
+
+    <div class="relative z-10 max-w-5xl text-center">
+        <div class="float inline-flex mb-8">
+            <span class="px-4 py-2 rounded-full border border-orange-500/30 bg-orange-500/10 text-orange-300 text-[11px] tracking-[.25em] uppercase font-bold backdrop-blur-md">
+                Players Minecraft Environment • 2026
+            </span>
+        </div>                   
+
+        <h1 class="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[1.05]">
+          <span class="bg-gradient-to-r from-orange-400 via-red-400 to-red-500 bg-clip-text text-transparent">
+            Where Minecraft Legends Unite.
+            </span>
+            <span class="bg-gradient-to-r from-orange-400 via-red-400 to-red-500 bg-clip-text text-transparent">
+                Explore.
+            </span>
+            <br>
+          <span class="bg-gradient-to-r from-orange-400 via-red-400 to-red-500 bg-clip-text text-transparent"> 
+            Create. Conquer.
+          </span>
+        </h1>
+
+        <p class="max-w-3xl mx-auto mt-8 text-lg md:text-xl text-slate-400 leading-relaxed font-normal">
+            Master full-stack engineering, test live REST APIs, execute inline JavaScript, generate complete Manifest V3 extension zip files, and browse the web inside a seamless interactive workspace.
+        </p>
+
+        <div class="flex flex-wrap justify-center gap-4 mt-10">
+            <button onclick="scrollToId('mini-ide')" class="glow px-8 py-4 rounded-2xl bg-gradient-to-r from-orange-400 to-orange-400 text-slate-950 font-black hover:scale-105 transition shadow-xl">
+                Open Java Live IDE 🚀
+            </button>
+            <button onclick="scrollToId('browser')" class="px-8 py-4 rounded-2xl bg-slate-900 border border-slate-700 text-white font-bold hover:border-orange-500 hover:text-orange-300 transition">
+                Open All Minecraft Servers 🌍
+            </button>
+            <button onclick="scrollToId('apps')" class="px-8 py-4 rounded-2xl bg-slate-900 border border-slate-700 text-white font-bold hover:border-red-500 hover:text-red-300 transition">
+                Minecraft Player Tools📦
+            </button>
+        </div>
+
+        <!-- STATS / METRICS -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mt-16">
+            <div class="glass border border-slate-800/80 rounded-2xl p-5 hover:border-orange-500/40 transition">
+                <div class="text-3xl font-black text-orange-400">100%</div>
+                <div class="text-[10px] uppercase tracking-widest text-slate-400 font-bold mt-1">Client-Side Exec</div>
+            </div>
+            <div class="glass border border-slate-800/80 rounded-2xl p-5 hover:border-red-500/40 transition">
+                <div class="text-3xl font-black text-red-400">MV3</div>
+                <div class="text-[10px] uppercase tracking-widest text-slate-400 font-bold mt-1">Extension Zip Engine</div>
+            </div>
+            <div class="glass border border-slate-800/80 rounded-2xl p-5 hover:border-orange-500/40 transition">
+                <div class="text-3xl font-black text-orange-400">LIVE</div>
+                <div class="text-[10px] uppercase tracking-widest text-slate-400 font-bold mt-1">Real-time Sandbox</div>
+            </div>
+            <div class="glass border border-slate-800/80 rounded-2xl p-5 hover:border-amber-500/40 transition">
+                <div class="text-3xl font-black text-amber-400">REST</div>
+                <div class="text-[10px] uppercase tracking-widest text-slate-400 font-bold mt-1">API Tester Suite</div>
+            </div>
+        </div>
+    </div>
 </section>
 
-<div class="ebooks" aria-label="Ebook topics">
-  <a href="https://xocassey.github.io/minecraft/ebook%20store%20xo%20cassey.html"><span>🧱</span>Building</a>
-  <a href="https://xocassey.github.io/minecraft/ebook%20store%20xo%20cassey.html"><span>🔴</span>Redstone</a>
-  <a href="https://xocassey.github.io/minecraft/ebook%20store%20xo%20cassey.html"><span>🛡️</span>Survival</a>
-  <a href="https://xocassey.github.io/minecraft/ebook%20store%20xo%20cassey.html"><span>🧩</span>Mods &amp; Plugins</a>
-</div>
-
-<section class="panel" aria-labelledby="acc">
-  <h3 id="acc">My accounts</h3>
-  <div class="acct">
-    <img id="skin" src="https://minotar.net/armor/bust/Netherite_VI/150.png" alt="Minecraft skin of Netherite_VI">
-    <div>
-      <div class="row"><strong>Minecraft Username:</strong> Netherite_VI <button class="chip" data-copy="Netherite_VI">Copy</button></div>
-      <div class="row"><strong>Discord:</strong> netherite_vi <button class="chip" data-copy="netherite_vi">Copy</button></div>
-      <a class="btn" style="margin-left:0" href="https://xocassey.github.io/minecraft/server_conquered.html">Server I conquered</a>
+<!-- TEACHING HUB -->
+<section id="teaching-hub" class="py-28 px-6 max-w-7xl mx-auto">
+    <div class="text-center max-w-2xl mx-auto mb-16">
+        <span class="text-xs font-semibold tracking-widest text-orange-400 uppercase bg-orange-950/80 border border-orange-800 px-3 py-1 rounded-full">Active Learning Hub</span>
+        <h2 class="text-3xl md:text-4xl font-bold mt-4">Interactive Learning Tracks & Tech Lessons</h2>
+        <p class="mt-3 text-slate-400">Select a module below to start learning directly from live teaching texts and tutorials.</p>
     </div>
-  </div>
-  <form class="field" id="skinForm">
-    <input id="skinName" placeholder="Look up any player’s skin" aria-label="Minecraft username" maxlength="16">
-    <button class="chip" type="submit">Show skin</button>
-  </form>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden hover:border-orange-500/50 transition-all duration-300 group">
+            <div class="p-6">
+                <span class="text-xs font-semibold text-orange-400 bg-orange-950 px-3 py-1 rounded-full border border-orange-800">Web Development</span>
+                <h3 class="text-xl font-bold mt-4">Full-Stack Engineering</h3>
+                <p class="text-slate-400 text-sm mt-2">Build modern responsive apps using React, Node, and Tailwind CSS from scratch.</p>
+                <button onclick="loadTeachingLesson('Full-Stack Engineering', 'Welcome to Full-Stack Engineering! Here you learn how to bridge frontend UI (HTML, CSS, JavaScript) with backend database management (Node.js, Express, PostgreSQL). Your first lesson covers DOM manipulation and REST API routing.')" class="mt-6 w-full py-3 bg-slate-800 hover:bg-gradient-to-r hover:from-orange-400 hover:to-orange-400 hover:text-slate-950 font-bold rounded-xl transition-all duration-300 active:scale-95 shadow-md cursor-pointer">
+                    Open Teaching Text 📖
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden hover:border-red-500/50 transition-all duration-300 group">
+            <div class="p-6">
+                <span class="text-xs font-semibold text-red-400 bg-red-950 px-3 py-1 rounded-full border border-red-800">Artificial Intelligence</span>
+                <h3 class="text-xl font-bold mt-4">AI & Prompt Engineering</h3>
+                <p class="text-slate-400 text-sm mt-2">Master machine learning principles, fine-tuning language models, and agent architectures.</p>
+                <button onclick="loadTeachingLesson('AI & Prompt Engineering', 'Welcome to AI Mastery! In this module, you study Large Language Models (LLMs), tokenization, zero-shot/few-shot prompting frameworks, and connecting custom developer agents using Python and vector embeddings.')" class="mt-6 w-full py-3 bg-slate-800 hover:bg-gradient-to-r hover:from-red-400 hover:to-orange-400 hover:text-slate-950 font-bold rounded-xl transition-all duration-300 active:scale-95 shadow-md cursor-pointer">
+                    Open Teaching Text 🤖
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden hover:border-orange-500/50 transition-all duration-300 group">
+            <div class="p-6">
+                <span class="text-xs font-semibold text-orange-400 bg-orange-950 px-3 py-1 rounded-full border border-orange-800">Cybersecurity</span>
+                <h3 class="text-xl font-bold mt-4">Ethical Hacking Lab</h3>
+                <p class="text-slate-400 text-sm mt-2">Learn network defense, penetration testing, and vulnerability assessment through gamified puzzles.</p>
+                <button onclick="loadTeachingLesson('Ethical Hacking Lab', 'Welcome to Cybersecurity Defense! Learn packet analysis with Wireshark, understanding OWASP Top 10 vulnerabilities (like SQL Injection and Cross-Site Scripting), and hardening server nodes against external breaches.')" class="mt-6 w-full py-3 bg-slate-800 hover:bg-gradient-to-r hover:from-orange-400 hover:to-orange-400 hover:text-slate-950 font-bold rounded-xl transition-all duration-300 active:scale-95 shadow-md cursor-pointer">
+                    Open Teaching Text 🔒
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="lessonConsole" class="bg-slate-900/90 border border-slate-800 p-8 rounded-3xl shadow-2xl max-w-4xl mx-auto backdrop-blur-md">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
+            <h4 id="lessonTitle" class="text-lg font-bold text-orange-400 font-mono">Select a track above to load teaching text...</h4>
+            <span class="text-xs font-mono text-slate-500">RAYOLLA_LECTURE_FEED</span>
+        </div>
+        <p id="lessonContent" class="text-slate-300 text-sm md:text-base leading-relaxed">
+            Click any "Open Teaching Text" button on the cards above to load comprehensive course material and structured lesson text dynamically right here.
+        </p>
+    </div>
 </section>
 
-<section id="players">
-  <h2 class="sec-title">💥MINECRAFT PLAYERS💥</h2>
-  <p class="sub"><strong>Top Minecraft Players</strong><br>Here are some of the top minecraft players in the world:</p>
+<!-- LIVE IN-BROWSER MINI IDE -->
+<section id="mini-ide" class="py-28 px-6 bg-slate-900/40 border-t border-slate-800/80">
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <span class="text-xs font-semibold tracking-widest text-orange-400 uppercase bg-orange-950/80 border border-orange-800 px-3 py-1 rounded-full">Interactive Sandbox</span>
+            <h2 class="text-3xl md:text-4xl font-bold mt-4">Live Online Java Editor</h2>
+            <p class="mt-3 text-slate-400">Write Java code below, click Run, and see the compiled output instantly!</p>
+        </div>
 
-  <article class="panel player">
-    <img src="https://xocassey.github.io/minecraft/flame%20pvp.jpg" alt="FlameFrags">
-    <div>
-      <h3>#1.FRAMEFRAGS</h3><span class="tag">(Immortal Demon)</span>
-      <p>known for his pvp skills and his ability to win fights against multiple opponents at once. He is also known for his entertaining commentary and his ability to make even the most mundane minecraft gameplay exciting to watch.</p>
-      <blockquote>“FlameFrags is a popular Minecraft YouTuber known for his Survival Multiplayer (SMP) adventures, PvP challenges, and high-stakes gameplay across various servers.”</blockquote>
-      <ul><li><a href="https://www.youtube.com/@FlameFragsMC">FlameFrags YouTube Channel</a></li></ul>
-    </div>
-  </article>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl">
+            <!-- EDITOR -->
+            <div class="flex flex-col">
+                <div class="flex justify-between items-center mb-2 px-1">
+                    <span class="text-xs font-mono text-orange-400">EDITOR (JAVA) · class must be named Main</span>
+                    <div class="flex gap-2">
+                        <button onclick="resetEditorCode()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-lg transition-all active:scale-95 cursor-pointer">Reset</button>
+                        <button id="runBtn" onclick="runUserCode()" class="px-4 py-1.5 bg-gradient-to-r from-orange-400 to-orange-400 text-slate-950 font-bold text-xs rounded-lg hover:opacity-90 transition-all active:scale-95 shadow-md cursor-pointer flex items-center gap-1">Run Code ▶</button>
+                    </div>
+                </div>
+                <textarea id="codeEditorInput" spellcheck="false" class="w-full h-80 bg-slate-950 border border-slate-800 rounded-2xl p-4 font-mono text-xs text-orange-300 focus:outline-none focus:border-orange-400 resize-none">public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello from Rayolla Tech!");
 
-  <article class="panel player">
-    <img src="https://xocassey.github.io/minecraft/dreammon.jpg" alt="Dream">
-    <div>
-      <h3>#2.DREAM</h3><span class="tag">(best minecraft speedrunner...)</span>
-      <p>known for his speedrunning skills and his ability to complete minecraft challenges in record time. He is also known for his entertaining commentary and his ability to make even the most mundane minecraft gameplay exciting to watch.</p>
-      <blockquote>“Dream is a popular Minecraft YouTuber and content creator known for his Minecraft Manhunt series, where he attempts to complete the game while being hunted by other players.”</blockquote>
-      <ul><li><a href="https://www.youtube.com/@dream">Dream YouTube Channel</a></li></ul>
-    </div>
-  </article>
-
-  <article class="panel player">
-    <img src="https://xocassey.github.io/minecraft/judelow.jpg" alt="JudeLow">
-    <div>
-      <h3>#3.JUDELOW</h3><span class="tag">(best trap builder)</span>
-      <p>known for his trap-building skills and his ability to create complex and effective traps that can catch even the most experienced players off guard. He is also known for his entertaining commentary and his ability to make even the most mundane minecraft gameplay exciting to watch.</p>
-      <blockquote>“JudeLow is a popular Minecraft YouTuber and content creator widely recognized as one of the game’s most skilled ‘trappers’. He is known for inventing and utilizing complex, often unknown game mechanics to create inescapable or one-shot traps in various Survival Multiplayer (SMP) servers.”</blockquote>
-      <ul><li><a href="https://www.youtube.com/@JudeLoSasso">JudeLow YouTube Channel</a></li></ul>
-    </div>
-  </article>
-  <p class="empty" id="empty">😕 No players found. Try another search.</p>
-</section>
-
-<h2 class="sec-title" id="tools">🛠️ Hub Tools</h2>
-<div class="grid">
-  <section class="panel" aria-labelledby="srv">
-    <h3 id="srv">Server status checker</h3>
-    <p>Check if a Java server is online and how many players are on.</p>
-    <form class="field" id="srvForm">
-      <input id="srvIp" placeholder="play.example.net" aria-label="Server address">
-      <button class="chip" type="submit">Check</button>
-    </form>
-    <p class="status" id="srvOut" aria-live="polite"></p>
-  </section>
-  <section class="panel" aria-labelledby="tip">
-    <h3 id="tip">💡 Tip of the day</h3>
-    <p id="tipText"></p>
-    <button class="chip" id="tipNext" style="margin-top:12px">Another tip</button>
-  </section>
-</div>
-</main>
-
-<footer>by <strong>Cassey M Davidson</strong></footer>
-</div>
-
-<button id="top" aria-label="Back to top">↑</button>
-<button id="aiBtn" aria-expanded="false" aria-controls="ai">🤖 Netherite AI</button>
-<section id="ai" aria-label="Netherite AI chat">
-  <div class="ai-head">NETHERITE AI<small>Your Minecraft guide. Ask me anything.</small></div>
-  <div id="log" aria-live="polite"></div>
-  <div class="sug" id="sug"></div>
-  <form class="ai-in" id="aiForm">
-    <input id="aiIn" placeholder="Ask about Minecraft…" aria-label="Message Netherite AI" autocomplete="off">
-    <button class="chip" type="submit">Send</button>
-  </form>
-</section>
-
-<script>
-/* ===== flame background ===== */
-var fireLevel=1;
-(function(){
-  var c=document.getElementById('fire'),x=c.getContext('2d'),W,H,P=[];
-  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function size(){W=c.width=innerWidth;H=c.height=innerHeight}
-  addEventListener('resize',size);size();
-  function spawn(){
-    var e=Math.random()<.15;
-    P.push({x:Math.random()*W,y:H+20,r:e?2+Math.random()*3:35+Math.random()*60,vy:e?2+Math.random()*3.5:1+Math.random()*2.2,vx:(Math.random()-.5)*.8,life:0,max:e?160+Math.random()*100:70+Math.random()*80,e:e});
-  }
-  function tick(t){
-    x.globalCompositeOperation='source-over';x.clearRect(0,0,W,H);x.globalCompositeOperation='lighter';
-    var n=Math.ceil(W/320*fireLevel);
-    for(var s=0;s<n;s++)spawn();
-    for(var i=P.length-1;i>=0;i--){
-      var p=P[i];p.life++;p.y-=p.vy;p.x+=p.vx+Math.sin((p.y+t/10)/40)*.6;
-      var k=p.life/p.max;if(k>=1){P.splice(i,1);continue}
-      var r=p.e?p.r:p.r*(1-k*.7),g=x.createRadialGradient(p.x,p.y,0,p.x,p.y,r),a=p.e?(1-k)*.9:(1-k)*.2;
-      g.addColorStop(0,'hsla('+(52-k*50)+',100%,'+(62-k*20)+'%,'+a+')');g.addColorStop(1,'hsla(8,100%,40%,0)');
-      x.fillStyle=g;x.beginPath();x.arc(p.x,p.y,r,0,6.2832);x.fill();
+        int sum = 0;
+        for (int i = 1; i <= 5; i++) {
+            sum += i;
+        }
+        System.out.println("Sum of 1 to 5 = " + sum);
     }
-  }
-  if(reduce){for(var j=0;j<150;j++)tick(0)}else{(function loop(t){tick(t);requestAnimationFrame(loop)})(0)}
-})();
-(function(){
-  var b=document.getElementById('fireBtn'),modes=[['🔥 High',1],['🔥 Low',.35],['🔥 Off',0]],i=0;
-  b.onclick=function(){i=(i+1)%3;b.textContent=modes[i][0];fireLevel=modes[i][1]};
-})();
+}</textarea>
 
-/* ===== player search ===== */
-(function(){
-  var q=document.getElementById('q'),cards=document.querySelectorAll('.player'),em=document.getElementById('empty');
-  q.addEventListener('input',function(){
-    var v=q.value.trim().toLowerCase(),n=0;
-    cards.forEach(function(c){var ok=!v||c.textContent.toLowerCase().indexOf(v)>-1;c.style.display=ok?'':'none';if(ok)n++});
-    em.style.display=n?'none':'block';
-  });
-})();
+                <span class="text-xs font-mono text-orange-400 mt-3 mb-1 px-1">STDIN (optional input)</span>
+                <textarea id="stdinInput" spellcheck="false" placeholder="Input for Scanner goes here..." class="w-full h-16 bg-slate-950 border border-slate-800 rounded-2xl p-3 font-mono text-xs text-orange-300 focus:outline-none focus:border-orange-400 resize-none"></textarea>
+            </div>
 
-/* ===== copy buttons, skin lookup, back to top ===== */
-document.querySelectorAll('[data-copy]').forEach(function(b){
-  b.onclick=function(){
-    var t=b.dataset.copy;
-    (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){b.textContent='Copied!'}).catch(function(){b.textContent='Press Ctrl+C'});
-    setTimeout(function(){b.textContent='Copy'},1500);
+            <!-- OUTPUT -->
+            <div class="flex flex-col">
+                <div class="flex justify-between items-center mb-2 px-1">
+                    <span class="text-xs font-mono text-orange-400">CONSOLE OUTPUT</span>
+                    <span id="runStatus" class="text-[10px] font-mono text-slate-500">READY</span>
+                </div>
+                <pre id="codePreviewOutput" class="w-full h-80 bg-slate-950 text-green-400 rounded-2xl border border-slate-800 p-4 font-mono text-xs overflow-auto whitespace-pre-wrap">// Output will appear here...</pre>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ENHANCED PLAY STORE-STYLE APP STORE WITH REAL INTERACTIVE APPS & FUNCTIONAL SEARCH -->
+<section id="apps" class="py-28 px-6 max-w-7xl mx-auto">
+    <div class="text-center max-w-3xl mx-auto mb-10">
+        <span class="text-xs font-semibold tracking-widest text-red-400 uppercase bg-red-950/80 border border-red-800 px-3 py-1 rounded-full">Player's App Hub</span>
+        <h2 class="text-3xl md:text-5xl font-black mt-4 bg-gradient-to-r from-orange-400 via-red-400 to-orange-400 bg-clip-text text-transparent">Minecrafter's Tools 📦</h2>
+        <p class="mt-3 text-slate-400 text-sm md:text-base">Install the launcher, grab mods and modpacks, find servers, and look up players. Everything a Minecrafter needs in one hub.</p>
+    </div>
+
+    <!-- Control Bar -->
+    <div class="bg-slate-900/80 border border-slate-800 p-4 md:p-6 rounded-3xl mb-10 backdrop-blur-xl flex flex-col md:flex-row gap-4 justify-between items-center shadow-2xl">
+        <div class="relative w-full md:w-96">
+            <input type="text" id="appSearchInput" oninput="filterPlayStoreApps()" placeholder="🔍 Search launcher, mods, servers, skins..." class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs text-orange-300 font-mono focus:outline-none focus:border-orange-400">
+        </div>
+        <div class="flex flex-wrap items-center gap-2 w-full md:w-auto justify-start md:justify-end">
+            <button onclick="filterAppCategory('all')" id="cat-all" class="store-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-orange-400 text-slate-950 transition cursor-pointer">All</button>
+            <button onclick="filterAppCategory('launcher')" id="cat-launcher" class="store-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer">Launcher</button>
+            <button onclick="filterAppCategory('mods')" id="cat-mods" class="store-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer">Mods</button>
+            <button onclick="filterAppCategory('servers')" id="cat-servers" class="store-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer">Servers</button>
+            <button onclick="filterAppCategory('profiles')" id="cat-profiles" class="store-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer">Profiles</button>
+        </div>
+    </div>
+
+    <!-- Grid -->
+    <div id="playStoreGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        <!-- TOOL 1: .minecraft Launcher -->
+        <div class="app-item bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between hover:border-green-500/50 transition-all duration-300 group" data-category="launcher" data-name="minecraft launcher install download java bedrock .minecraft">
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-14 h-14 rounded-2xl bg-green-950 border border-green-800 flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 transition">⛏️</div>
+                    <span class="text-[10px] font-mono text-green-400 bg-green-950/80 border border-green-800 px-2.5 py-1 rounded-full font-semibold">OFFICIAL • Mojang</span>
+                </div>
+                <h3 class="text-xl font-bold text-white">.minecraft Launcher</h3>
+                <p class="text-slate-400 text-xs mt-2 leading-relaxed">Download and install the official Minecraft Launcher for Java and Bedrock editions, then manage your game versions and profiles.</p>
+
+                <div class="mt-4 p-4 bg-slate-950 border border-slate-800 rounded-2xl space-y-3">
+                    <div class="flex justify-between items-center text-[10px] font-mono text-green-400">
+                        <span>INSTALL HELPER</span>
+                        <span id="osDetected">Detecting OS...</span>
+                    </div>
+                    <div class="p-3 bg-slate-900 rounded-xl text-[11px] font-mono text-slate-300">
+                        Game folder:<br>
+                        <code id="mcFolderPath" class="text-green-400">%appdata%\.minecraft</code>
+                    </div>
+                    <button onclick="copyMcFolderPath()" class="w-full py-2 bg-green-950 border border-green-800 text-green-300 hover:bg-green-900 rounded-xl text-xs font-mono font-bold transition cursor-pointer">
+                        📋 Copy .minecraft Folder Path
+                    </button>
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-800/80 space-y-3">
+                <div class="flex justify-between items-center text-[11px] font-mono text-slate-500">
+                    <span>minecraft.net • Windows / Mac / Linux</span>
+                    <span class="text-orange-400 font-bold">FREE LAUNCHER</span>
+                </div>
+                <button onclick="window.open('https://www.minecraft.net/en-us/download', '_blank')" class="w-full py-3 bg-gradient-to-r from-green-400 to-orange-400 hover:opacity-90 text-slate-950 font-black text-xs rounded-xl transition-all shadow-md active:scale-95 cursor-pointer">
+                    Install Launcher ⬇
+                </button>
+            </div>
+        </div>
+
+        <!-- TOOL 2: CurseForge -->
+        <div class="app-item bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between hover:border-orange-500/50 transition-all duration-300 group" data-category="mods" data-name="curseforge mods modpacks addons resource packs texture shaders">
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-14 h-14 rounded-2xl bg-orange-950 border border-orange-800 flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 transition">🔥</div>
+                    <span class="text-[10px] font-mono text-orange-400 bg-orange-950/80 border border-orange-800 px-2.5 py-1 rounded-full font-semibold">MODS • MODPACKS</span>
+                </div>
+                <h3 class="text-xl font-bold text-white">CurseForge</h3>
+                <p class="text-slate-400 text-xs mt-2 leading-relaxed">Browse thousands of Minecraft mods, modpacks, resource packs, shaders, and worlds.</p>
+
+                <div class="mt-4 p-4 bg-slate-950 border border-slate-800 rounded-2xl space-y-3">
+                    <div class="flex justify-between items-center text-[10px] font-mono text-orange-400">
+                        <span>QUICK MOD SEARCH</span>
+                        <span>curseforge.com</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="text" id="curseSearchInput" onkeydown="if(event.key==='Enter') searchCurseForge()" placeholder="e.g. JourneyMap, OptiFine..." class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs font-mono text-orange-300 focus:outline-none focus:border-orange-400">
+                        <button onclick="searchCurseForge()" class="px-3 py-2 bg-orange-500 hover:bg-orange-400 text-slate-950 font-bold text-xs rounded-xl transition cursor-pointer">Search</button>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-800/80 space-y-3">
+                <div class="flex justify-between items-center text-[11px] font-mono text-slate-500">
+                    <span>curseforge.com/minecraft</span>
+                    <span class="text-orange-400 font-bold">FREE</span>
+                </div>
+                <button onclick="window.open('https://www.curseforge.com/minecraft', '_blank')" class="w-full py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:opacity-90 text-slate-950 font-black text-xs rounded-xl transition-all shadow-md active:scale-95 cursor-pointer">
+                    Open CurseForge ↗
+                </button>
+            </div>
+        </div>
+
+        <!-- TOOL 3: MinecraftServers.org -->
+        <div class="app-item bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between hover:border-red-500/50 transition-all duration-300 group" data-category="servers" data-name="minecraftservers.org server list multiplayer skyblock survival pvp ip">
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-14 h-14 rounded-2xl bg-red-950 border border-red-800 flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 transition">🌍</div>
+                    <span class="text-[10px] font-mono text-red-400 bg-red-950/80 border border-red-800 px-2.5 py-1 rounded-full font-semibold">SERVER LIST</span>
+                </div>
+                <h3 class="text-xl font-bold text-white">MinecraftServers.org</h3>
+                <p class="text-slate-400 text-xs mt-2 leading-relaxed">Find top-rated multiplayer servers for Survival, Skyblock, PvP, Factions, Minigames, and more.</p>
+
+                <div class="mt-4 p-4 bg-slate-950 border border-slate-800 rounded-2xl space-y-3">
+                    <div class="flex justify-between items-center text-[10px] font-mono text-red-400">
+                        <span>BROWSE BY GAME MODE</span>
+                        <span>minecraftservers.org</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="openServerTag('survival')" class="px-3 py-1.5 bg-slate-900 border border-slate-800 hover:border-red-500 text-slate-300 text-[11px] font-mono rounded-lg transition cursor-pointer">Survival</button>
+                        <button onclick="openServerTag('skyblock')" class="px-3 py-1.5 bg-slate-900 border border-slate-800 hover:border-red-500 text-slate-300 text-[11px] font-mono rounded-lg transition cursor-pointer">Skyblock</button>
+                        <button onclick="openServerTag('pvp')" class="px-3 py-1.5 bg-slate-900 border border-slate-800 hover:border-red-500 text-slate-300 text-[11px] font-mono rounded-lg transition cursor-pointer">PvP</button>
+                        <button onclick="openServerTag('minigames')" class="px-3 py-1.5 bg-slate-900 border border-slate-800 hover:border-red-500 text-slate-300 text-[11px] font-mono rounded-lg transition cursor-pointer">Minigames</button>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-800/80 space-y-3">
+                <div class="flex justify-between items-center text-[11px] font-mono text-slate-500">
+                    <span>Java &amp; Bedrock servers</span>
+                    <span class="text-orange-400 font-bold">FREE</span>
+                </div>
+                <button onclick="window.open('https://minecraftservers.org', '_blank')" class="w-full py-3 bg-gradient-to-r from-red-400 to-orange-400 hover:opacity-90 text-slate-950 font-black text-xs rounded-xl transition-all shadow-md active:scale-95 cursor-pointer">
+                    Browse Servers ↗
+                </button>
+            </div>
+        </div>
+
+        <!-- TOOL 4: NameMC -->
+        <div class="app-item bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between hover:border-amber-500/50 transition-all duration-300 group" data-category="profiles" data-name="namemc name mc skins username profile capes lookup">
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-950 border border-amber-800 flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 transition">🧑‍🎤</div>
+                    <span class="text-[10px] font-mono text-amber-400 bg-amber-950/80 border border-amber-800 px-2.5 py-1 rounded-full font-semibold">SKINS • USERNAMES</span>
+                </div>
+                <h3 class="text-xl font-bold text-white">NameMC</h3>
+                <p class="text-slate-400 text-xs mt-2 leading-relaxed">Look up any player's skin and name history, check username availability, and discover new skins.</p>
+
+                <div class="mt-4 p-4 bg-slate-950 border border-slate-800 rounded-2xl space-y-3">
+                    <div class="flex justify-between items-center text-[10px] font-mono text-amber-400">
+                        <span>PLAYER LOOKUP</span>
+                        <span>namemc.com</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="text" id="nameMcInput" maxlength="16" onkeydown="if(event.key==='Enter') lookupNameMC()" placeholder="Enter username..." class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs font-mono text-amber-300 focus:outline-none focus:border-amber-400">
+                        <button onclick="lookupNameMC()" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl transition cursor-pointer">Look Up</button>
+                    </div>
+                    <p id="nameMcHint" class="text-[10px] font-mono text-slate-500">Usernames are 3-16 letters, numbers, or underscores.</p>
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-800/80 space-y-3">
+                <div class="flex justify-between items-center text-[11px] font-mono text-slate-500">
+                    <span>Skins • Capes • Name history</span>
+                    <span class="text-orange-400 font-bold">FREE</span>
+                </div>
+                <button onclick="window.open('https://namemc.com', '_blank')" class="w-full py-3 bg-gradient-to-r from-amber-400 to-orange-400 hover:opacity-90 text-slate-950 font-black text-xs rounded-xl transition-all shadow-md active:scale-95 cursor-pointer">
+                    Open NameMC ↗
+                </button>
+            </div>
+        </div>
+
+    </div>
+    <p id="noAppsMsg" class="hidden text-center text-slate-500 font-mono text-sm mt-10">No tools match your search.</p>
+</section>
+<!-- ENHANCED BROWSER WITH GOOGLE SEARCH CONNECTIVITY -->
+<style>
+    .browser-frame { height: 520px; border: 0; }
+</style>
+
+<section id="browser" class="py-28 px-6 relative z-10">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-12">
+            <span class="text-xs uppercase tracking-[.25em] text-blue-400 font-bold">Integrated Browser Space</span>
+            <h2 class="text-4xl md:text-5xl font-black mt-3">Rayolla Web Explorer 🌐</h2>
+            <p class="text-slate-400 mt-3 text-sm">Search Wikipedia inside the frame, or open any site in a new tab.</p>
+        </div>
+
+        <div class="bg-slate-950 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
+            <div class="bg-slate-900/90 border-b border-slate-800 p-4">
+                <div class="flex items-center gap-2 flex-wrap md:flex-nowrap">
+                    <button onclick="browserBack()" id="btnBack" title="Back" class="px-3.5 py-2 bg-slate-800 rounded-xl hover:bg-slate-700 text-xs font-bold transition cursor-pointer">←</button>
+                    <button onclick="browserForward()" id="btnForward" title="Forward" class="px-3.5 py-2 bg-slate-800 rounded-xl hover:bg-slate-700 text-xs font-bold transition cursor-pointer">→</button>
+                    <button onclick="browserReload()" title="Reload" class="px-3.5 py-2 bg-slate-800 rounded-xl hover:bg-slate-700 text-xs font-bold transition cursor-pointer">↻</button>
+
+                    <input id="browserUrl" value="https://example.com" placeholder="Type a search query or URL..." onkeydown="if(event.key==='Enter') executeWebSearch()" class="flex-1 min-w-[160px] bg-slate-950 border border-slate-700/80 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-orange-400 font-mono">
+
+                    <select id="searchEngine" class="bg-slate-950 border border-slate-700/80 rounded-xl px-2 py-2 text-xs text-orange-300 font-mono focus:outline-none cursor-pointer">
+                        <option value="wikipedia">Wikipedia (in frame)</option>
+                        <option value="google">Google (new tab)</option>
+                        <option value="ddg">DuckDuckGo (new tab)</option>
+                    </select>
+
+                    <button onclick="executeWebSearch()" class="px-5 py-2 bg-gradient-to-r from-blue-500 via-red-500 to-orange-400 text-slate-950 font-black rounded-xl text-xs hover:opacity-90 transition cursor-pointer shadow-md">
+                        Go 🔍
+                    </button>
+                    <button onclick="openBrowserExternal()" title="Open in new tab" class="px-3.5 py-2 bg-slate-800 rounded-xl text-xs font-bold hover:bg-slate-700 transition cursor-pointer">↗</button>
+                </div>
+
+                <div class="mt-3 flex gap-2 flex-wrap items-center">
+                    <span class="text-[10px] text-slate-500 font-mono uppercase mr-1">Presets:</span>
+                    <button onclick="quickSearch('https://example.com')" class="px-3 py-1 bg-slate-800/80 hover:bg-slate-700 rounded-lg text-[10px] text-slate-300 transition cursor-pointer">Example.com</button>
+                    <button onclick="quickSearch('https://en.wikipedia.org')" class="px-3 py-1 bg-slate-800/80 hover:bg-slate-700 rounded-lg text-[10px] text-slate-300 transition cursor-pointer">Wikipedia</button>
+                    <button onclick="quickSearch('https://minecraft.wiki')" class="px-3 py-1 bg-green-950 border border-green-800 text-green-300 hover:bg-green-900 rounded-lg text-[10px] font-mono transition cursor-pointer">⛏️ Minecraft Wiki</button>
+                    <button onclick="quickSearch('Minecraft')" class="px-3 py-1 bg-orange-950 border border-orange-800 text-orange-300 hover:bg-orange-900 rounded-lg text-[10px] font-mono transition cursor-pointer">🔍 Search "Minecraft"</button>
+                </div>
+            </div>
+
+            <iframe id="browserFrame" src="https://example.com" class="browser-frame w-full bg-white" title="Rayolla Explorer"></iframe>
+
+            <div class="p-3.5 bg-slate-900/90 border-t border-slate-800 text-[11px] text-slate-500 flex items-center justify-between gap-3">
+                <span>Some sites block embedding (<code class="text-orange-400">X-Frame-Options</code>). Those open in a new tab with <code class="text-orange-400">↗</code>.</span>
+                <span class="text-slate-400 font-mono whitespace-nowrap" id="browserFrameStatus">FRAME READY</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- QUICK CODE SNIPPET VAULT -->
+<section id="snippet-vault" class="py-28 px-6 bg-slate-900/40 border-t border-slate-800/80">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <span class="text-xs font-semibold tracking-widest text-amber-400 uppercase bg-amber-950/80 border border-amber-800 px-3 py-1 rounded-full">Developer Cheat Sheet</span>
+            <h2 class="text-3xl md:text-4xl font-bold mt-4">Quick Code Snippet Vault</h2>
+            <p class="mt-3 text-slate-400">Instantly copy hand-crafted utility snippets for your daily engineering tasks.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs font-mono text-orange-400 font-bold">Local Storage Wrapper</span>
+                        <button onclick="copySnippet('snippet1')" class="text-xs font-mono text-slate-400 hover:text-orange-400 bg-slate-800 px-2.5 py-1 rounded-lg transition-all cursor-pointer">Copy 📋</button>
+                    </div>
+                    <pre id="snippet1" class="bg-slate-950 p-3 rounded-xl text-[11px] font-mono text-slate-300 overflow-x-auto">const storage = {
+  set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
+  get: (k) => JSON.parse(localStorage.getItem(k))
+};</pre>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs font-mono text-red-400 font-bold">Debounce Function</span>
+                        <button onclick="copySnippet('snippet2')" class="text-xs font-mono text-slate-400 hover:text-red-400 bg-slate-800 px-2.5 py-1 rounded-lg transition-all cursor-pointer">Copy 📋</button>
+                    </div>
+                    <pre id="snippet2" class="bg-slate-950 p-3 rounded-xl text-[11px] font-mono text-slate-300 overflow-x-auto">const debounce = (fn, delay = 300) => {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
   };
-});
-document.getElementById('skinForm').onsubmit=function(e){
-  e.preventDefault();
-  var n=document.getElementById('skinName').value.trim();
-  if(!/^\w{3,16}$/.test(n))return;
-  var im=document.getElementById('skin');
-  im.src='https://minotar.net/armor/bust/'+n+'/150.png';im.alt='Minecraft skin of '+n;
-};
-(function(){
-  var b=document.getElementById('top');
-  addEventListener('scroll',function(){b.classList.toggle('show',scrollY>400)});
-  b.onclick=function(){scrollTo({top:0})};
-})();
+};</pre>
+                </div>
+            </div>
 
-/* ===== server status ===== */
-document.getElementById('srvForm').onsubmit=function(e){
-  e.preventDefault();
-  var ip=document.getElementById('srvIp').value.trim(),out=document.getElementById('srvOut');
-  if(!ip)return;
-  out.className='status';out.textContent='Checking…';
-  fetch('https://api.mcsrvstat.us/3/'+encodeURIComponent(ip)).then(function(r){return r.json()}).then(function(d){
-    if(d.online){
-      out.className='status on';
-      out.textContent='● Online\n'+(d.motd&&d.motd.clean?d.motd.clean.join(' '):'')+'\nPlayers: '+d.players.online+' / '+d.players.max+'\nVersion: '+(d.version||'unknown');
-    }else{out.className='status off';out.textContent='● Offline or not found'}
-  }).catch(function(){out.className='status off';out.textContent='Could not reach the status service. Try again later.'});
-};
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs font-mono text-orange-400 font-bold">Random Hex Generator</span>
+                        <button onclick="copySnippet('snippet3')" class="text-xs font-mono text-slate-400 hover:text-orange-400 bg-slate-800 px-2.5 py-1 rounded-lg transition-all cursor-pointer">Copy 📋</button>
+                    </div>
+                    <pre id="snippet3" class="bg-slate-950 p-3 rounded-xl text-[11px] font-mono text-slate-300 overflow-x-auto">const randomHex = () => '#' + 
+  Math.floor(Math.random() * 16777215)
+    .toString(16)
+    .padStart(6, '0');</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-/* ===== tip of the day ===== */
-(function(){
-  var tips=['Place a water bucket under you when falling to cancel fall damage.','Sleep in a bed to skip the night and set your spawn point.','Diamonds generate most often near the bottom of the world, around Y -59.','Use Mending books on your best tools so XP keeps them repairing.','Pillar up with blocks and look down to place them under your feet.','Carry a few ender pearls: they are your best escape and travel tool.','Light up caves and bases with torches to stop mobs from spawning.','A shield blocks arrows, explosions and sword hits when timed right.','Stack Efficiency V and Unbreaking III on a pickaxe for fast, long-lasting mining.','Bring a bucket of water into the Nether to put out fire and cross lava.'];
-  var el=document.getElementById('tipText'),i=Math.floor(Date.now()/864e5)%tips.length;
-  function show(){el.textContent=tips[i]}
-  show();document.getElementById('tipNext').onclick=function(){i=(i+1)%tips.length;show()};
-})();
+<!-- TERMINAL LAB -->
+<section id="terminal-lab" class="py-28 px-6 bg-slate-900/60 border-t border-slate-800/80">
+    <div class="max-w-5xl mx-auto">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+            <span class="text-xs font-semibold tracking-widest text-orange-400 uppercase bg-orange-950/80 border border-orange-800 px-3 py-1 rounded-full">Interactive CLI Training</span>
+            <h2 class="text-3xl md:text-4xl font-bold mt-4">Practicing Linux Terminal</h2>
+            <p class="mt-3 text-slate-400">Type commands like <code class="text-orange-400">help</code>, <code class="text-orange-400">ls</code>, <code class="text-orange-400">whoami</code>, <code class="text-orange-400">date</code>, <code class="text-orange-400">matrix</code>, or <code class="text-orange-400">clear</code> below!</p>
+        </div>
 
-/* ===== Netherite AI ===== */
-(function(){
-  /* Optional: put your own backend URL here to use a real AI model.
-     It should accept POST {message} and return JSON {reply}. Leave empty to use the built-in guide. */
-  var API='';
-  var KB=[
-   [['hello','hi','hey','yo'],'Hey! I am Netherite AI. Ask me about portals, diamonds, redstone, PvP, bosses, mods, or this site.'],
-   [['nether portal','portal','obsidian'],'Nether portal: build a frame of obsidian (10 blocks is enough, corners are optional) and light it with flint and steel. Make obsidian by pouring water on lava source blocks, and mine it with a diamond or netherite pickaxe.'],
-   [['netherite','ancient debris','scrap'],'Netherite: mine ancient debris in the Nether (most common around Y 15). Smelt it into scrap, then craft 4 scrap + 4 gold ingots into 1 netherite ingot. Upgrade diamond gear at a smithing table with an upgrade template + ingot.'],
-   [['diamond'],'Diamonds are most common deep underground, around Y -59 in newer versions. Branch mine or explore caves, and bring an iron pickaxe or better. Fortune III increases drops.'],
-   [['dragon','end','stronghold','eye of ender'],'Ender Dragon: craft eyes of ender (ender pearl + blaze powder) to find a stronghold, activate the End portal, then destroy the end crystals on the pillars. Hit the dragon when it perches. Bring a bow, blocks and a water bucket.'],
-   [['wither'],'Wither: build a T shape of 4 soul sand or soul soil, add 3 wither skeleton skulls on top. Do it in an open area, away from your base, with strong armor and a good weapon.'],
-   [['pvp','fight','combat','sword'],'PvP tips: use Sharpness gear and Protection armor, land critical hits by attacking while falling, keep a shield and golden apples ready, strafe to dodge, and practice sprint resets.'],
-   [['speedrun','manhunt','dream'],'Speedrun basics: find a ruined portal or village, barter with piglins for ender pearls, collect blaze rods, craft eyes of ender, then beat the dragon. Dream is known for his Manhunt series.'],
-   [['trap','judelow'],'Traps use pistons, tripwires, pressure plates, lava and ender pearl stasis chambers. Only use them on servers that allow trapping, and never grief other players.'],
-   [['redstone','piston','hopper','comparator','repeater'],'Redstone starter path: dust and torches, then repeaters and comparators, then pistons, observers and hoppers. Try a hidden door, an item sorter, then an auto farm.'],
-   [['enchant','mending','unbreaking','sharpness','efficiency'],'Great enchants: Mending, Unbreaking III, Efficiency V (tools), Protection IV (armor), Sharpness V (sword), Fortune III (mining). Combine books on an anvil.'],
-   [['start','begin','survival','first night','new'],'First day: punch trees, craft a table and wooden tools, mine coal and stone, get food, then build a shelter and craft a bed before night.'],
-   [['mod','plugin','fabric','forge','server'],'Mods: Fabric or NeoForge loaders, with Sodium, Lithium and Iris for speed and shaders. Server plugins: Paper, EssentialsX and LuckPerms are popular. Our ebooks cover mods and plugins.'],
-   [['ebook','book','store','buy'],'Our ebooks cover building, redstone, survival, and mods and plugins. Use the Ebooks link in the menu to open the store.'],
-   [['discord','username','account','netherite_vi','who is cassey','owner'],'Minecraft username: Netherite_VI. Discord: netherite_vi. The site is by Cassey M Davidson.'],
-   [['rank','tier','top player'],'Top players on this site: FlameFrags (PvP), Dream (speedrunning) and JudeLow (traps). Check the PVP Rankings link for the live list.'],
-   [['joke','funny'],'Why did the creeper cross the road? To get to the other SSSSS-ide.'],
-   [['thank'],'Anytime! Good luck out there, and watch out for lava.'],
-   [['who are you','your name','what are you'],'I am Netherite AI, the guide for Minecraft Hub. I am a built-in assistant that knows Minecraft basics and this site.']
-  ];
-  var sugs=['How do I get netherite?','Best PvP tips','Nether portal','Redstone ideas'];
-  var panel=document.getElementById('ai'),btn=document.getElementById('aiBtn'),log=document.getElementById('log'),inp=document.getElementById('aiIn'),sug=document.getElementById('sug');
-  function add(t,who){var d=document.createElement('div');d.className='m '+who;d.textContent=t;log.appendChild(d);log.scrollTop=log.scrollHeight;return d}
-  function local(msg){
-    var m=msg.toLowerCase(),best=null,score=0;
-    KB.forEach(function(e){var s=0;e[0].forEach(function(k){if(m.indexOf(k)>-1)s+=k.length});if(s>score){score=s;best=e}});
-    return best?best[1]:'I am not sure about that one. Try asking about netherite, diamonds, portals, PvP, redstone, bosses, mods, or our ebooks.';
-  }
-  function ask(msg){
-    add(msg,'me');var t=add('…','bot');
-    var done=function(r){setTimeout(function(){t.textContent=r;log.scrollTop=log.scrollHeight},450)};
-    if(API){
-      fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg})})
-        .then(function(r){return r.json()}).then(function(d){done(d.reply||local(msg))}).catch(function(){done(local(msg))});
-    }else done(local(msg));
-  }
-  function open(v){panel.classList.toggle('open',v);btn.setAttribute('aria-expanded',v);if(v)inp.focus()}
-  btn.onclick=function(){open(!panel.classList.contains('open'))};
-  document.querySelectorAll('[data-ask]').forEach(function(b){b.onclick=function(){open(true)}});
-  sugs.forEach(function(s){var b=document.createElement('button');b.className='chip';b.type='button';b.textContent=s;b.onclick=function(){ask(s)};sug.appendChild(b)});
-  document.getElementById('aiForm').onsubmit=function(e){e.preventDefault();var v=inp.value.trim();if(!v)return;inp.value='';ask(v)};
-  add('Hi, I am Netherite AI. Ask me anything about Minecraft or this site.','bot');
-})();
+        <div class="bg-slate-950 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden font-mono text-xs">
+            <div class="bg-slate-900 px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
+                    <span class="w-3 h-3 rounded-full bg-yellow-500 inline-block"></span>
+                    <span class="w-3 h-3 rounded-full bg-green-500 inline-block"></span>
+                    <span class="text-slate-400 ml-2 font-semibold">NETH@VI:~</span>
+                </div>
+                <button onclick="clearTerminal()" class="text-slate-400 hover:text-orange-400 transition-colors text-xs cursor-pointer px-3 py-1 bg-slate-800 rounded-lg">Clear Screen ⌫</button>
+            </div>
+
+            <div id="terminalOutput" class="p-6 h-72 overflow-y-auto space-y-2 text-slate-300 selection:bg-orange-500 selection:text-black">
+                <div class="text-orange-400">Neth Terminal [Version 2.7.0]</div>
+                <div class="text-slate-500">Type <span class="text-yellow-400 font-bold">help</span> to view available commands. Created by George Rayolla.</div>
+                <br>
+            </div>
+
+            <div class="bg-slate-900/80 px-6 py-4 border-t border-slate-800 flex items-center gap-3">
+                <span class="text-orange-400 font-bold">neth@vi:~$</span>
+                <input type="text" id="terminalInput" onkeydown="handleTerminalCommand(event)" placeholder="Type a command..." class="flex-1 bg-transparent text-slate-100 focus:outline-none font-mono text-xs">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- RAYOLLA SAFE CONTROL MODAL -->
+<div id="rayollaSafeModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md hidden">
+    <div class="bg-slate-900 border border-amber-500/50 w-full max-w-3xl p-8 rounded-3xl shadow-2xl relative text-left">
+        <div class="flex justify-between items-center mb-6 border-b border-slate-800 pb-4">
+            <div class="flex items-center gap-3">
+                <span class="w-3 h-3 rounded-full bg-amber-500 inline-block animate-ping"></span>
+                <h3 class="text-lg font-bold text-amber-400 font-mono tracking-wide">🔐 RAYOLLA SAFE & MASTER CONTROL</h3>
+            </div>
+            <button onclick="closeRayollaSafe()" class="text-slate-400 hover:text-white font-mono text-base cursor-pointer px-2.5 py-1 bg-slate-800 rounded-lg">✕</button>
+        </div>
+
+        <div id="safeLockScreen" class="space-y-4">
+            <p class="text-xs text-slate-400 font-mono">Restricted Area. Enter the Master Security Passkey (<span class="text-amber-400 font-bold">GEORGE2026</span>) to unlock hidden site codes and administrative switches.</p>
+            <div class="flex gap-3">
+                <input type="password" id="safePasskeyInput" placeholder="Enter security passkey..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-amber-400 font-mono text-xs focus:outline-none focus:border-amber-500">
+                <button onclick="verifySafePasskey()" class="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl transition-all shadow-md active:scale-95 cursor-pointer">Unlock Safe 🔓</button>
+            </div>
+        </div>
+
+        <div id="safeDashboard" class="hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-slate-950 border border-slate-800 p-4 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <div class="text-xs font-bold text-slate-200">Site Accent Glow</div>
+                        <div class="text-[10px] text-slate-500">Toggle primary lighting style</div>
+                    </div>
+                    <button onclick="toggleSiteMode()" class="px-3 py-1.5 bg-orange-500/20 border border-orange-500 text-orange-300 rounded-lg text-xs font-mono hover:bg-orange-500 hover:text-slate-950 transition-all cursor-pointer">Switch Theme</button>
+                </div>
+
+                <div class="bg-slate-950 border border-slate-800 p-4 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <div class="text-xs font-bold text-slate-200">Maintenance Mode</div>
+                        <div class="text-[10px] text-slate-500">Display notice on site overlay</div>
+                    </div>
+                    <button onclick="toggleMaintenance()" id="maintenanceBtn" class="px-3 py-1.5 bg-red-500/20 border border-red-500 text-red-300 rounded-lg text-xs font-mono hover:bg-red-500 hover:text-slate-950 transition-all cursor-pointer">Activate</button>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-mono text-amber-400 mb-2 uppercase tracking-wider">📦 Hidden Core Source Code Repository</label>
+                <textarea readonly class="w-full h-48 bg-slate-950 border border-slate-800 rounded-2xl p-4 font-mono text-[11px] text-slate-300 focus:outline-none resize-none selection:bg-amber-500 selection:text-black">&lt;!-- RAYOLLA TECH MASTER SYSTEM CODE ARCHIVE --&gt;
+&lt;script&gt;
+  const OWNER_NAME = "Cassey Migoya";
+  const SYSTEM_STATUS = "ACTIVE_SECURE";
+  console.log("Netherite Safe loaded successfully. All source controls operational.");
+&lt;/script&gt;</textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- NATIVE INTERACTIVE TALKING AI VOICE ASSISTANT WIDGET -->
+<div id="aiAssistantWidget" class="fixed bottom-6 left-6 z-50">
+    <button onclick="toggleAIPanel()" class="relative flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-tr from-orange-400 via-red-500 to-red-600 text-slate-950 shadow-2xl hover:scale-110 transition duration-300 cursor-pointer">
+        <span class="text-2xl">🤖</span>
+        <span id="aiPulse" class="absolute inset-0 rounded-full bg-orange-400 opacity-0 animate-ping"></span>
+    </button>
+
+    <div id="aiPanel" class="hidden absolute bottom-16 left-0 w-80 md:w-96 glass border border-slate-700/80 rounded-3xl p-5 shadow-2xl backdrop-blur-2xl">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+            <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-orange-400 animate-pulse"></span>
+                <span class="font-mono text-xs font-bold text-orange-300 uppercase">Nexus Talking AI</span>
+            </div>
+            <button onclick="toggleAIPanel()" class="text-slate-400 hover:text-white text-xs cursor-pointer">✕</button>
+        </div>
+
+        <div id="aiTranscript" class="h-44 overflow-y-auto bg-slate-950/70 p-3 rounded-xl border border-slate-800 text-xs font-mono space-y-2 mb-3">
+            <div class="text-slate-400 font-sans italic">Hello! I am your AI assistant. Click "Speak" to talk using your microphone or type below!</div>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <button id="micBtn" onclick="toggleSpeechRecognition()" class="px-3.5 py-2 bg-gradient-to-r from-orange-400 to-orange-400 text-slate-950 font-bold text-xs rounded-xl flex items-center gap-1 shadow-md transition active:scale-95 cursor-pointer">
+                <span>🎙️</span> <span id="micLabel">Speak</span>
+            </button>
+            <input type="text" id="aiInput" placeholder="Ask AI or type command..." onkeydown="if(event.key==='Enter') processAIPrompt()" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-orange-300 focus:outline-none focus:border-orange-400 font-mono">
+            <button onclick="processAIPrompt()" class="px-3 py-2 bg-slate-800 text-orange-300 font-bold text-xs rounded-xl hover:bg-slate-700 cursor-pointer">Send</button>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="py-10 text-center text-xs text-slate-500 border-t border-slate-900 space-y-2">
+    <p>&copy; 2026 Minecraft Hub. All rights reserved.</p>
+    <p class="font-medium text-slate-400">Built Different & Powered by <span class="text-orange-400 font-bold">Cassey Davidson</span> ⚡</p>
+</footer>
+<script>
+    (function () {
+        const frame = document.getElementById("browserFrame");
+        const urlInput = document.getElementById("browserUrl");
+        const statusEl = document.getElementById("browserFrameStatus");
+
+        // Sites that refuse to load inside an iframe
+        const BLOCKED = [
+            "google.", "youtube.", "github.com", "minecraft.net", "curseforge.com",
+            "namemc.com", "minecraftservers.org", "roblox.com", "vscode.dev",
+            "facebook.com", "instagram.com", "twitter.com", "x.com", "reddit.com",
+            "bing.com", "duckduckgo.com", "portswigger.net", "tiktok.com", "linkedin.com"
+        ];
+
+        let history = [];
+        let idx = -1;
+
+        function setStatus(text, color) {
+            statusEl.textContent = text;
+            statusEl.style.color = color || "";
+        }
+
+        function escapeHtml(s) {
+            return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+        }
+
+        function isBlocked(url) {
+            try {
+                const host = new URL(url).hostname.toLowerCase();
+                return BLOCKED.some(b => host.includes(b));
+            } catch (e) { return false; }
+        }
+
+        function looksLikeUrl(text) {
+            if (/^https?:\/\//i.test(text)) return true;
+            return /^[^\s]+\.[a-z]{2,}(\/[^\s]*)?$/i.test(text);
+        }
+
+        function showBlockedPanel(url) {
+            const safe = escapeHtml(url);
+            frame.srcdoc =
+                '<body style="margin:0;height:100vh;display:flex;align-items:center;justify-content:center;background:#0f172a;color:#e2e8f0;font-family:sans-serif;text-align:center">' +
+                '<div style="max-width:420px;padding:24px">' +
+                '<div style="font-size:40px">🔒</div>' +
+                '<h3 style="margin:12px 0 6px">This site can\'t be shown inside the frame</h3>' +
+                '<p style="color:#94a3b8;font-size:13px;line-height:1.5">' + safe + ' blocks embedding for security reasons.</p>' +
+                '<a href="' + safe + '" target="_blank" rel="noopener" style="display:inline-block;margin-top:14px;padding:10px 20px;background:#fb923c;color:#020617;font-weight:bold;border-radius:10px;text-decoration:none">Open in new tab ↗</a>' +
+                '</div></body>';
+            setStatus("BLOCKED · OPEN IN NEW TAB", "#fb923c");
+        }
+
+        function loadInFrame(url) {
+            urlInput.value = url;
+            if (isBlocked(url)) {
+                showBlockedPanel(url);
+                return;
+            }
+            frame.removeAttribute("srcdoc");
+            setStatus("LOADING...", "#fb923c");
+            frame.src = url;
+        }
+
+        function navigate(url, pushHistory) {
+            if (pushHistory !== false) {
+                history = history.slice(0, idx + 1);
+                history.push(url);
+                idx = history.length - 1;
+            }
+            loadInFrame(url);
+            updateNavButtons();
+        }
+
+        function updateNavButtons() {
+            document.getElementById("btnBack").style.opacity = idx > 0 ? "1" : "0.4";
+            document.getElementById("btnForward").style.opacity = idx < history.length - 1 ? "1" : "0.4";
+        }
+
+        frame.addEventListener("load", function () {
+            if (!frame.hasAttribute("srcdoc")) setStatus("PAGE LOADED", "#4ade80");
+        });
+
+        // ---------- Functions your buttons call ----------
+        window.executeWebSearch = function () {
+            const raw = urlInput.value.trim();
+            if (!raw) return;
+
+            if (looksLikeUrl(raw)) {
+                navigate(/^https?:\/\//i.test(raw) ? raw : "https://" + raw);
+                return;
+            }
+
+            const q = encodeURIComponent(raw);
+            const engine = document.getElementById("searchEngine").value;
+
+            if (engine === "wikipedia") {
+                navigate("https://en.wikipedia.org/w/index.php?search=" + q);
+            } else if (engine === "google") {
+                window.open("https://www.google.com/search?q=" + q, "_blank", "noopener");
+                setStatus("OPENED GOOGLE IN NEW TAB", "#4ade80");
+            } else {
+                window.open("https://duckduckgo.com/?q=" + q, "_blank", "noopener");
+                setStatus("OPENED DUCKDUCKGO IN NEW TAB", "#4ade80");
+            }
+        };
+
+        window.quickSearch = function (value) {
+            urlInput.value = value;
+            window.executeWebSearch();
+        };
+
+        window.browserBack = function () {
+            if (idx > 0) { idx--; loadInFrame(history[idx]); updateNavButtons(); }
+        };
+
+        window.browserForward = function () {
+            if (idx < history.length - 1) { idx++; loadInFrame(history[idx]); updateNavButtons(); }
+        };
+
+        window.browserReload = function () {
+            if (idx >= 0) loadInFrame(history[idx]);
+        };
+
+        window.openBrowserExternal = function () {
+            const target = idx >= 0 ? history[idx] : urlInput.value.trim();
+            if (!target) return;
+            const url = looksLikeUrl(target)
+                ? (/^https?:\/\//i.test(target) ? target : "https://" + target)
+                : "https://www.google.com/search?q=" + encodeURIComponent(target);
+            window.open(url, "_blank", "noopener");
+        };
+
+        // Used by other sections' buttons
+        window.scrollToId = function (id) {
+            const el = document.getElementById(id);
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+        };
+
+        // Start with the default page in history
+        history = ["https://example.com"];
+        idx = 0;
+        updateNavButtons();
+    })();
+</script>
+<script>
+    // ---------- Search + category filter ----------
+    let activeCategory = "all";
+
+    function applyStoreFilters() {
+        const query = (document.getElementById("appSearchInput").value || "").toLowerCase().trim();
+        let visible = 0;
+        document.querySelectorAll("#playStoreGrid .app-item").forEach(card => {
+            const name = (card.dataset.name || "").toLowerCase();
+            const cat = card.dataset.category;
+            const show = (activeCategory === "all" || cat === activeCategory) && name.includes(query);
+            card.style.display = show ? "" : "none";
+            if (show) visible++;
+        });
+        document.getElementById("noAppsMsg").classList.toggle("hidden", visible > 0);
+    }
+
+    function filterPlayStoreApps() { applyStoreFilters(); }
+
+    function filterAppCategory(cat) {
+        activeCategory = cat;
+        document.querySelectorAll(".store-filter-btn").forEach(btn => {
+            const isActive = btn.id === "cat-" + cat;
+            btn.classList.toggle("bg-orange-400", isActive);
+            btn.classList.toggle("text-slate-950", isActive);
+            btn.classList.toggle("bg-slate-800", !isActive);
+            btn.classList.toggle("text-slate-400", !isActive);
+        });
+        applyStoreFilters();
+    }
+
+    // ---------- .minecraft launcher helper ----------
+    (function detectOS() {
+        const ua = navigator.userAgent;
+        let os = "Windows", path = "%appdata%\\.minecraft";
+        if (/Mac/i.test(ua)) { os = "macOS"; path = "~/Library/Application Support/minecraft"; }
+        else if (/Linux/i.test(ua) && !/Android/i.test(ua)) { os = "Linux"; path = "~/.minecraft"; }
+        else if (/Android/i.test(ua)) { os = "Android"; path = "Use Minecraft Bedrock from Google Play"; }
+        else if (/iPhone|iPad/i.test(ua)) { os = "iOS"; path = "Use Minecraft Bedrock from the App Store"; }
+        const osEl = document.getElementById("osDetected");
+        const pathEl = document.getElementById("mcFolderPath");
+        if (osEl) osEl.textContent = os + " detected";
+        if (pathEl) pathEl.textContent = path;
+    })();
+
+    function copyMcFolderPath() {
+        const text = document.getElementById("mcFolderPath").textContent;
+        navigator.clipboard.writeText(text)
+            .then(() => alert("Copied: " + text))
+            .catch(() => prompt("Copy this path:", text));
+    }
+
+    // ---------- CurseForge search ----------
+    function searchCurseForge() {
+        const q = document.getElementById("curseSearchInput").value.trim();
+        const url = q
+            ? "https://www.curseforge.com/minecraft/search?search=" + encodeURIComponent(q)
+            : "https://www.curseforge.com/minecraft";
+        window.open(url, "_blank");
+    }
+
+    // ---------- MinecraftServers.org tags ----------
+    function openServerTag(tag) {
+        window.open("https://minecraftservers.org/tag/" + encodeURIComponent(tag), "_blank");
+    }
+
+    // ---------- NameMC lookup ----------
+    function lookupNameMC() {
+        const input = document.getElementById("nameMcInput");
+        const hint = document.getElementById("nameMcHint");
+        const name = input.value.trim();
+        if (!/^[A-Za-z0-9_]{3,16}$/.test(name)) {
+            hint.textContent = "Invalid username. Use 3-16 letters, numbers, or underscores.";
+            hint.style.color = "#f87171";
+            return;
+        }
+        hint.textContent = "Opening profile for " + name + "...";
+        hint.style.color = "#4ade80";
+        window.open("https://namemc.com/profile/" + encodeURIComponent(name), "_blank");
+    }
+</script>
+<script>
+    // Judge0 CE public endpoint. Swap this URL if you host your own or use another provider.
+    const JUDGE0_URL = "https://ce.judge0.com/submissions?base64_encoded=false&wait=true";
+    const JAVA_LANGUAGE_ID = 62; // Java (OpenJDK) in Judge0
+
+    const DEFAULT_JAVA_CODE = `public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello from Rayolla Tech!");
+
+        int sum = 0;
+        for (int i = 1; i <= 5; i++) {
+            sum += i;
+        }
+        System.out.println("Sum of 1 to 5 = " + sum);
+    }
+}`;
+
+    const editor = document.getElementById("codeEditorInput");
+    const stdinBox = document.getElementById("stdinInput");
+    const output = document.getElementById("codePreviewOutput");
+    const statusEl = document.getElementById("runStatus");
+    const runBtn = document.getElementById("runBtn");
+
+    function setStatus(text, color) {
+        statusEl.textContent = text;
+        statusEl.style.color = color || "";
+    }
+
+    async function runUserCode() {
+        const code = editor.value;
+        if (!code.trim()) {
+            output.style.color = "#f87171";
+            output.textContent = "Please write some Java code first.";
+            return;
+        }
+
+        runBtn.disabled = true;
+        runBtn.style.opacity = "0.6";
+        setStatus("COMPILING & RUNNING...", "#fb923c");
+        output.style.color = "#94a3b8";
+        output.textContent = "Running...";
+
+        try {
+            const response = await fetch(JUDGE0_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    language_id: JAVA_LANGUAGE_ID,
+                    source_code: code,
+                    stdin: stdinBox.value
+                })
+            });
+
+            if (!response.ok) throw new Error("Server responded with status " + response.status);
+
+            const result = await response.json();
+
+            if (result.compile_output) {
+                output.style.color = "#f87171";
+                output.textContent = "Compilation Error:\n" + result.compile_output;
+                setStatus("COMPILE ERROR", "#f87171");
+            } else if (result.stderr) {
+                output.style.color = "#f87171";
+                output.textContent = (result.stdout || "") + "\nRuntime Error:\n" + result.stderr;
+                setStatus("RUNTIME ERROR", "#f87171");
+            } else {
+                output.style.color = "#4ade80";
+                output.textContent = result.stdout || "(program finished with no output)";
+                setStatus("DONE · " + (result.time || "0") + "s", "#4ade80");
+            }
+        } catch (err) {
+            output.style.color = "#f87171";
+            output.textContent = "Could not reach the Java compiler service.\n" + err.message;
+            setStatus("NETWORK ERROR", "#f87171");
+        } finally {
+            runBtn.disabled = false;
+            runBtn.style.opacity = "1";
+        }
+    }
+
+    function resetEditorCode() {
+        editor.value = DEFAULT_JAVA_CODE;
+        stdinBox.value = "";
+        output.style.color = "#4ade80";
+        output.textContent = "// Output will appear here...";
+        setStatus("READY", "");
+    }
+
+    // Tab key inserts 4 spaces instead of leaving the editor
+    editor.addEventListener("keydown", function (e) {
+        if (e.key === "Tab") {
+            e.preventDefault();
+            const start = this.selectionStart;
+            this.value = this.value.substring(0, start) + "    " + this.value.substring(this.selectionEnd);
+            this.selectionStart = this.selectionEnd = start + 4;
+        }
+        // Ctrl/Cmd + Enter runs the code
+        if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+            e.preventDefault();
+            runUserCode();
+        }
+    });
+</script>
+
+<!-- SYSTEM SCRIPT ENGINE -->
+<script>
+    // ----------------------------------------------------
+    // GENERAL UTILITY FUNCTIONS
+    // ----------------------------------------------------
+    function scrollToId(id) {
+        document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+    }
+
+    function loadTeachingLesson(title, text) {
+        document.getElementById("lessonTitle").innerText = title;
+        document.getElementById("lessonContent").innerText = text;
+        scrollToId("lessonConsole");
+    }
+
+    function runUserCode() {
+        const code = document.getElementById("codeEditorInput").value;
+        const iframe = document.getElementById("codePreviewOutput");
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        doc.open();
+        doc.write(code);
+        doc.close();
+    }
+    window.onload = function() { runUserCode(); };
+
+    function resetEditorCode() {
+        document.getElementById("codeEditorInput").value = `<h2 style="color: #ff6a00;">Hello from Rayolla Tech!</h2>\n<p style="color: #94a3b8;">Modify this code and click Run Code.</p>\n<button onclick="alert('Live interactive code execution works!')" style="background:#ff6a00; color:#030712; padding:10px 20px; border-radius:8px; font-weight:bold; border:none; margin-top:12px; cursor:pointer;">Test Action ⚡</button>`;
+        runUserCode();
+    }
+
+    function copySnippet(elementId) {
+        const text = document.getElementById(elementId).innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            alert("Snippet copied to clipboard! 📋");
+        });
+    }
+
+    function realDownloadApp(filename, type) {
+        let content = "";
+        if(type === 'markdown') content = "# NexusPad Markdown Editor\n\nWrite your markdown notes here...";
+        if(type === 'colorpicker') content = "/* HexGen UI Color Studio */\n:root { --primary: #0071e3; }";
+        if(type === 'regex') content = "// RegexVerifier Pro Sandbox Script";
+
+        const blob = new Blob([content], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // ----------------------------------------------------
+    // PLAY STORE APP HUB FILTERING ENGINE & INTERACTIVE LOGIC
+    // --------------------------------------------------
+    let currentCategory = 'all';
+
+    function filterAppCategory(cat) {
+        currentCategory = cat;
+        document.querySelectorAll('.store-filter-btn').forEach(btn => {
+            btn.className = "store-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer";
+        });
+        const activeBtn = document.getElementById('cat-' + cat);
+        if (activeBtn) {
+            activeBtn.className = "store-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-orange-400 text-slate-950 transition cursor-pointer";
+        }
+        filterPlayStoreApps();
+    }
+
+    function filterPlayStoreApps() {
+        const query = document.getElementById('appSearchInput').value.toLowerCase().trim();
+        const appCards = document.querySelectorAll('#playStoreGrid .app-item');
+
+        appCards.forEach(card => {
+            const matchesCat = currentCategory === 'all' || card.getAttribute('data-category') === currentCategory;
+            const matchesSearch = card.getAttribute('data-name').includes(query) || card.innerText.toLowerCase().includes(query);
+
+            if (matchesCat && matchesSearch) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    // Live App 1 Logic (NexusPad)
+    function updateNexusPadPreview() {
+        const val = document.getElementById('nexusPadInput').value;
+        const count = document.getElementById('mdCharCount');
+        count.innerText = val.length + " chars";
+        
+        let formatted = val
+            .replace(/^# (.*$)/gim, '<h1 class="text-sm font-bold text-orange-400">$1</h1>')
+            .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
+            .replace(/\*(.*)\*/gim, '<em>$1</em>');
+            
+        document.getElementById('nexusPadPreview').innerHTML = formatted;
+    }
+
+    function copyNexusPadContent() {
+        const val = document.getElementById('nexusPadInput').value;
+        navigator.clipboard.writeText(val);
+        alert("NexusPad content copied to clipboard!");
+    }
+
+    // Live App 2 Logic (HexGen Color Studio)
+    function generateRandomHexColor() {
+        const hex = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0').toUpperCase();
+        document.getElementById('hexCodeDisplay').innerText = hex;
+        const box = document.getElementById('hexColorBox');
+        box.style.backgroundColor = hex;
+    }
+
+    // Live App 3 Logic (RegexVerifier Pro)
+    function runLiveRegexTest() {
+        const pattern = document.getElementById('regexPatternInput').value;
+        const testStr = document.getElementById('regexTestString').value;
+        const status = document.getElementById('regexMatchStatus');
+
+        try {
+            const regex = new RegExp(pattern);
+            if (regex.test(testStr)) {
+                status.innerText = "Match Found";
+                status.className = "text-orange-400 font-bold";
+            } else {
+                status.innerText = "No Match";
+                status.className = "text-rose-400 font-bold";
+            }
+        } catch(e) {
+            status.innerText = "Invalid Regex";
+            status.className = "text-amber-400 font-bold";
+        }
+    }
+
+    // Live App 4 Logic (RESTPulse API Suite)
+    function executeLiveApiRequest() {
+        const url = document.getElementById('apiEndpointUrl').value;
+        const box = document.getElementById('apiResponseBox');
+        const status = document.getElementById('apiStatusCode');
+        box.innerText = "Sending request...";
+
+        fetch(url)
+            .then(res => {
+                status.innerText = res.status + " " + res.statusText;
+                return res.json();
+            })
+            .then(data => {
+                box.innerText = JSON.stringify(data, null, 2);
+            })
+            .catch(err => {
+                status.innerText = "ERR";
+                box.innerText = "Error: " + err.message;
+            });
+    }
+
+    // Live App 5 Logic (Nexus MV3 Builder)
+    function generateManifestJson() {
+        const name = document.getElementById('mv3AppName').value || "My Extension";
+        const preview = document.getElementById('mv3JsonPreview');
+        const obj = {
+            manifest_version: 3,
+            name: name,
+            version: "1.0",
+            action: { default_popup: "popup.html" }
+        };
+        preview.innerText = JSON.stringify(obj, null, 2);
+    }
+
+    // Live App 6 Logic (SnipForge Code Vault)
+    function addQuickSnippet() {
+        const input = document.getElementById('snipTitleInput');
+        const val = input.value.trim();
+        if(!val) return;
+
+        const container = document.getElementById('snipListContainer');
+        const item = document.createElement('div');
+        item.className = "p-1.5 bg-slate-900 rounded-lg flex justify-between items-center text-slate-300";
+        item.innerHTML = `<span>⚡ ${val}</span><span class="text-[9px] text-orange-400">CUSTOM</span>`;
+        container.prepend(item);
+        input.value = "";
+    }
+
+    // Live App 7 Logic (HackerTyper Pro Simulator)
+    const hackerCodeSnippet = `/* ACCESS GRANTED - RAYOLLA SECURITY PROTOCOL V2.6 */\n#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int data;\n    struct Node* next;\n} Node;\n\nvoid executeOverrideSequence() {\n    printf("Bypassing firewall nodes...\\n");\n    printf("Injecting secure payload... SUCCESS\\n");\n}`;
+    let hackerCodeIndex = 0;
+
+    function handleHackerTyperInput(e) {
+        e.preventDefault();
+        const display = document.getElementById('hackerTyperDisplay');
+        if (hackerCodeIndex === 0) display.innerText = '';
+        
+        hackerCodeIndex += 3;
+        if (hackerCodeIndex >= hackerCodeSnippet.length) hackerCodeIndex = hackerCodeSnippet.length;
+
+        display.innerText = hackerCodeSnippet.substring(0, hackerCodeIndex);
+        display.scrollTop = display.scrollHeight;
+    }
+
+    function launchHackerTyperBrowser() {
+        document.getElementById("browserUrl").value = "https://hackertyper.com";
+        executeWebSearch();
+        scrollToId('browser');
+    }
+
+    // ----------------------------------------------------
+    // GOOGLE CONNECTED BROWSER ENGINE
+    // ----------------------------------------------------
+    function executeWebSearch() {
+        const query = document.getElementById("browserUrl").value.trim();
+        const frame = document.getElementById("browserFrame");
+        if (!query) return;
+
+        if (query.startsWith("http://") || query.startsWith("https://")) {
+            frame.src = query;
+        } else {
+            const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}&igu=1`;
+            document.getElementById("browserUrl").value = googleUrl;
+            frame.src = googleUrl;
+        }
+    }
+
+    function quickSearch(target) {
+        document.getElementById("browserUrl").value = target;
+        executeWebSearch();
+    }
+
+    function browserBack() {
+        try { document.getElementById("browserFrame").contentWindow.history.back(); } catch(e){}
+    }
+
+    function browserForward() {
+        try { document.getElementById("browserFrame").contentWindow.history.forward(); } catch(e){}
+    }
+
+    function browserReload() {
+        const frame = document.getElementById("browserFrame");
+        frame.src = frame.src;
+    }
+
+    function openBrowserExternal() {
+        const url = document.getElementById("browserUrl").value;
+        window.open(url, '_blank');
+    }
+
+    // ----------------------------------------------------
+    // TALKING AI ASSISTANT ENGINE (WEB SPEECH API)
+    // ----------------------------------------------------
+    let isListening = false;
+    let recognition = null;
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        recognition.onstart = function() {
+            isListening = true;
+            document.getElementById("micLabel").innerText = "Listening...";
+            document.getElementById("aiPulse").classList.remove("opacity-0");
+        };
+
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            document.getElementById("aiInput").value = transcript;
+            processAIPrompt();
+        };
+
+        recognition.onerror = function() {
+            stopListening();
+        };
+
+        recognition.onend = function() {
+            stopListening();
+        };
+    }
+
+    function toggleAIPanel() {
+        document.getElementById("aiPanel").classList.toggle("hidden");
+    }
+
+    function stopListening() {
+        isListening = false;
+        document.getElementById("micLabel").innerText = "Speak";
+        document.getElementById("aiPulse").classList.add("opacity-0");
+    }
+
+    function toggleSpeechRecognition() {
+        if (!recognition) {
+            alert("Web Speech recognition is not supported in this browser version.");
+            return;
+        }
+        if (isListening) {
+            recognition.stop();
+        } else {
+            recognition.start();
+        }
+    }
+
+    function speakText(text) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    function processAIPrompt() {
+        const inputField = document.getElementById("aiInput");
+        const transcript = document.getElementById("aiTranscript");
+        const query = inputField.value.trim();
+        if (!query) return;
+
+        transcript.innerHTML += `<div><span class="text-orange-400 font-bold">You:</span> ${query}</div>`;
+        inputField.value = "";
+
+        let aiReply = "I am ready to assist you in the Rayolla Tech environment!";
+        const lower = query.toLowerCase();
+
+        if (lower.includes("hello") || lower.includes("hi")) {
+            aiReply = "Hello! I am your talking AI. Ask me to search Google or run code!";
+        } else if (lower.includes("search") || lower.includes("google")) {
+            const cleanQuery = query.replace(/search|google|for/g, '').trim();
+            aiReply = `Searching Google for ${cleanQuery} right now.`;
+            quickSearch(cleanQuery || "Rayolla Tech");
+            scrollToId('browser');
+        } else if (lower.includes("ide") || lower.includes("code")) {
+            aiReply = "Navigating to the Live Code Editor module.";
+            scrollToId('mini-ide');
+        } else if (lower.includes("terminal")) {
+            aiReply = "Opening the CLI Terminal environment.";
+            scrollToId('terminal-lab');
+        }
+
+        transcript.innerHTML += `<div class="text-red-300"><span class="font-bold">Nexus AI:</span> ${aiReply}</div>`;
+        transcript.scrollTop = transcript.scrollHeight;
+        speakText(aiReply);
+    }
+
+    // ----------------------------------------------------
+    // TERMINAL LOGIC
+    // ----------------------------------------------------
+    function clearTerminal() {
+        document.getElementById("terminalOutput").innerHTML = '<div class="text-orange-400">Terminal cleared. Type <span class="text-yellow-400 font-bold">help</span> for commands.</div><br>';
+    }
+
+    function handleTerminalCommand(e) {
+        if (e.key === 'Enter') {
+            const input = document.getElementById("terminalInput");
+            const output = document.getElementById("terminalOutput");
+            const cmd = input.value.trim().toLowerCase();
+
+            output.innerHTML += `<div><span class="text-orange-400 font-bold">george@rayolla:~$</span> ${input.value}</div>`;
+            
+            if (cmd === 'help') {
+                output.innerHTML += `<div class="text-yellow-400">Available commands: help, ls, whoami, date, matrix, clear, safe, nmap</div>`;
+            } else if (cmd === 'ls') {
+                output.innerHTML += `<div class="text-slate-300">index.html &nbsp;&nbsp; teaching-hub/ &nbsp;&nbsp; apps/ &nbsp;&nbsp; snippet-vault/ &nbsp;&nbsp; safe/</div>`;
+            } else if (cmd === 'whoami') {
+                output.innerHTML += `<div class="text-orange-400">george-rayolla (System Administrator & Developer)</div>`;
+            } else if (cmd === 'date') {
+                output.innerHTML += `<div class="text-slate-300">${new Date().toUTCString()}</div>`;
+            } else if (cmd.startsWith('nmap')) {
+                output.innerHTML += `<div class="text-orange-400">Starting Nmap 7.94 scan on target...<br>PORT 80/tcp OPEN http<br>PORT 443/tcp OPEN https<br>Nmap done: 1 IP address scanned in 0.42 seconds.</div>`;
+            } else if (cmd === 'clear') {
+                clearTerminal();
+                input.value = '';
+                return;
+            } else if (cmd === 'safe') {
+                openRayollaSafe();
+                output.innerHTML += `<div class="text-amber-400">Rayolla Safe modal triggered via terminal CLI.</div>`;
+            } else if (cmd !== '') {
+                output.innerHTML += `<div class="text-red-400">Command not recognized: ${input.value}. Type 'help' for options.</div>`;
+            }
+
+            output.innerHTML += `<br>`;
+            input.value = '';
+            output.scrollTop = output.scrollHeight;
+        }
+    }
+
+    // ----------------------------------------------------
+    // SAFE CONTROL MODAL
+    // ----------------------------------------------------
+    function openRayollaSafe() {
+        document.getElementById("rayollaSafeModal").classList.remove("hidden");
+    }
+
+    function closeRayollaSafe() {
+        document.getElementById("rayollaSafeModal").classList.add("hidden");
+    }
+
+    function verifySafePasskey() {
+        const passkey = document.getElementById("safePasskeyInput").value.trim();
+        if (passkey === "GEORGE2026") {
+            document.getElementById("safeLockScreen").classList.add("hidden");
+            document.getElementById("safeDashboard").classList.remove("hidden");
+        } else {
+            alert("Incorrect Passkey! Hint: Use GEORGE2026");
+        }
+    }
+
+    function toggleSiteMode() {
+        alert("Rayolla Theme Glow Boosted ⚡");
+    }
+
+    let isMaintenanceActive = false;
+    function toggleMaintenance() {
+        isMaintenanceActive = !isMaintenanceActive;
+        const btn = document.getElementById("maintenanceBtn");
+        if(isMaintenanceActive) {
+            btn.innerText = "Deactivate";
+            btn.className = "px-3 py-1.5 bg-red-500 text-slate-950 rounded-lg text-xs font-mono hover:bg-red-400 transition-all cursor-pointer font-bold";
+            alert("Maintenance mode simulated online.");
+        } else {
+            btn.innerText = "Activate";
+            btn.className = "px-3 py-1.5 bg-red-500/20 border border-red-500 text-red-300 rounded-lg text-xs font-mono hover:bg-red-500 hover:text-slate-950 transition-all cursor-pointer";
+            alert("Site returned to full public visibility.");
+        }
+    }
 </script>
 </body>
 </html>
