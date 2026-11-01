@@ -3,262 +3,344 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Xocassey minecraft ebooks</title>
+<title>Minecraft Hub | Xocassey</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Rajdhani:wght@500;600&display=swap" rel="stylesheet">
 <style>
-:root{
-  --ink:#0c0403; --ember:#ff5a1f; --gold:#ffb703; --red:#e01e1e;
-  --text:#ffeedd; --muted:#f2c9a8; --card:rgba(20,7,4,.82);
-  --glow:0 0 14px rgba(255,90,31,.55), 0 0 36px rgba(224,30,30,.35);
-  --display:'Orbitron','Segoe UI',Arial,sans-serif;
-  --body:'Rajdhani','Segoe UI',Arial,sans-serif;
-}
+:root{--ember:#ff5a1f;--gold:#ffb703;--red:#e01e1e;--text:#ffeedd;--muted:#f2c9a8;--card:rgba(20,7,4,.84);
+--glow:0 0 14px rgba(255,90,31,.55),0 0 36px rgba(224,30,30,.35);
+--display:'Orbitron','Segoe UI',Arial,sans-serif;--body:'Rajdhani','Segoe UI',Arial,sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{
-  font-family:var(--body);font-size:1.15rem;line-height:1.6;color:var(--text);
-  min-height:100vh;
-  background:linear-gradient(180deg,#080202 0%,#170504 55%,#3d0e05 100%) fixed;
-}
+body{font-family:var(--body);font-size:1.15rem;line-height:1.6;color:var(--text);min-height:100vh;background:linear-gradient(180deg,#080202,#170504 55%,#3d0e05) fixed}
 #fire{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .page{position:relative;z-index:1}
-
-/* navbar */
-header{
-  position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;
-  justify-content:space-between;gap:12px;padding:12px 5vw;
-  background:rgba(12,4,3,.88);backdrop-filter:blur(8px);
-  border-bottom:1px solid rgba(255,90,31,.55);box-shadow:0 4px 24px rgba(224,30,30,.3);
-}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+header{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:10px 5vw;background:rgba(12,4,3,.9);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,90,31,.55);box-shadow:0 4px 24px rgba(224,30,30,.3)}
 .logo{font-family:var(--display);font-weight:800;font-size:1.05rem;color:var(--gold);text-decoration:none;text-shadow:var(--glow)}
-nav{display:flex;gap:10px;flex-wrap:wrap}
-nav a{
-  color:var(--text);text-decoration:none;font-weight:600;padding:6px 14px;border-radius:999px;
-  border:1px solid transparent;transition:border-color .2s,box-shadow .2s,color .2s;
-}
+nav{display:flex;gap:6px;flex-wrap:wrap}
+nav a{color:var(--text);text-decoration:none;font-weight:600;padding:4px 12px;border-radius:999px;border:1px solid transparent;transition:.2s}
 nav a:hover{color:var(--gold);border-color:var(--ember);box-shadow:var(--glow)}
-.search{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,90,31,.6);border-radius:999px;padding:4px 14px}
-.search input{background:none;border:0;outline:0;color:var(--text);font:inherit;width:min(34vw,200px)}
-.search input::placeholder{color:var(--muted);opacity:.8}
-.search:focus-within{box-shadow:var(--glow)}
-a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
-
-main{max-width:1000px;margin:0 auto;padding:0 5vw 80px}
-
-/* hero */
-.hero{text-align:center;padding:70px 0 40px}
-.hero h1.welcome{
-  font-family:var(--display);font-weight:800;font-size:clamp(1.5rem,5vw,2.8rem);line-height:1.25;
-  color:#fff3e0;text-shadow:0 0 10px var(--gold),0 0 28px var(--ember),0 0 56px var(--red);
-  animation:flicker 4s ease-in-out infinite;
-}
-@keyframes flicker{
-  0%,100%{text-shadow:0 0 10px var(--gold),0 0 28px var(--ember),0 0 56px var(--red)}
-  45%{text-shadow:0 0 6px var(--gold),0 0 20px var(--ember),0 0 40px var(--red)}
-  50%{text-shadow:0 0 14px var(--gold),0 0 36px var(--ember),0 0 70px var(--red)}
-}
-.panel{
-  background:var(--card);border:1px solid rgba(255,90,31,.55);border-radius:18px;
-  box-shadow:var(--glow);padding:28px clamp(18px,4vw,36px);margin-top:36px;
-}
-.panel h2{font-family:var(--display);font-size:clamp(1.4rem,4vw,2rem);color:var(--gold);margin-bottom:12px;text-shadow:0 0 12px rgba(255,90,31,.6)}
-.panel p{color:var(--text);max-width:75ch;margin-inline:auto}
-.hero .panel{text-align:center}
-
-/* accounts */
-.accounts h3{font-family:var(--display);font-size:1.15rem;color:var(--gold);margin-bottom:10px}
-.accounts p{margin-bottom:4px}
-.accounts strong{color:var(--gold)}
-.btn{
-  display:inline-block;margin-top:14px;padding:10px 22px;border-radius:999px;text-decoration:none;
-  font-weight:600;color:#1a0502;background:linear-gradient(90deg,var(--gold),var(--ember));
-  box-shadow:var(--glow);transition:transform .2s,box-shadow .2s;
-}
+.tools-bar{display:flex;gap:8px;align-items:center}
+.search{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.07);border:1px solid rgba(255,90,31,.6);border-radius:999px;padding:3px 12px}
+.search input,.field input{background:none;border:0;outline:0;color:var(--text);font:inherit;width:min(30vw,150px)}
+input::placeholder{color:var(--muted);opacity:.8}
+.chip,.fire-btn{font:inherit;font-weight:600;cursor:pointer;color:var(--gold);background:rgba(255,90,31,.12);border:1px solid var(--ember);border-radius:999px;padding:3px 12px}
+.chip:hover,.fire-btn:hover{box-shadow:var(--glow)}
+main{max-width:1000px;margin:0 auto;padding:0 5vw 90px}
+.hero{text-align:center;padding:64px 0 10px}
+.welcome{font-weight:600;color:var(--muted)}
+.hero h1{font-family:var(--display);font-weight:800;font-size:clamp(2rem,9vw,4.6rem);line-height:1.1;color:#fff3e0;margin:8px 0 14px;text-shadow:0 0 10px var(--gold),0 0 28px var(--ember),0 0 56px var(--red);animation:flicker 4s ease-in-out infinite}
+@keyframes flicker{45%{text-shadow:0 0 6px var(--gold),0 0 20px var(--ember),0 0 40px var(--red)}50%{text-shadow:0 0 14px var(--gold),0 0 38px var(--ember),0 0 74px var(--red)}}
+.btn{display:inline-block;margin:12px 6px 0;padding:10px 22px;border-radius:999px;border:0;font:inherit;font-weight:600;cursor:pointer;text-decoration:none;color:#1a0502;background:linear-gradient(90deg,var(--gold),var(--ember));box-shadow:var(--glow);transition:.2s}
 .btn:hover{transform:translateY(-2px);box-shadow:0 0 22px var(--gold),0 0 50px var(--red)}
-
-/* players */
-.players-head{text-align:center;margin:56px 0 8px}
-.players-head h2{font-family:var(--display);font-size:clamp(1.3rem,4vw,2rem);color:#fff3e0;text-shadow:0 0 12px var(--ember)}
-.players-head h3{font-family:var(--display);font-size:1.1rem;color:var(--gold);margin-top:14px}
-.players-head p{color:var(--muted)}
-.player{display:grid;grid-template-columns:220px 1fr;gap:26px;align-items:start;margin-top:30px}
-.player img{
-  width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:14px;
-  border:2px solid var(--ember);box-shadow:var(--glow);background:#2a0c06;
-}
-.player h3{font-family:var(--display);font-size:1.5rem;color:var(--gold);text-shadow:0 0 12px rgba(255,90,31,.6)}
-.tag{display:inline-block;margin:4px 0 10px;color:var(--ember);font-weight:600;font-style:italic}
-.player blockquote{margin:14px 0;padding:10px 16px;border-left:4px solid var(--ember);background:rgba(255,90,31,.1);border-radius:0 10px 10px 0;color:var(--muted)}
-.player ul{list-style:none}
-.player ul a{color:var(--gold);font-weight:600}
-.player ul a:hover{color:#fff}
+.btn.alt{background:rgba(12,4,3,.7);color:var(--gold);border:1px solid var(--gold)}
+.panel{background:var(--card);border:1px solid rgba(255,90,31,.55);border-radius:18px;box-shadow:var(--glow);padding:26px clamp(18px,4vw,34px);margin-top:30px}
+.panel h2,.panel h3{font-family:var(--display);color:var(--gold);text-shadow:0 0 12px rgba(255,90,31,.6)}
+.panel h2{font-size:clamp(1.3rem,4vw,1.9rem);margin-bottom:10px}
+.panel h3{font-size:1.1rem;margin-bottom:8px}
+.center{text-align:center}.center p{max-width:75ch;margin-inline:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.grid .panel{margin-top:30px}
+.sec-title{font-family:var(--display);text-align:center;font-size:clamp(1.3rem,4vw,2rem);color:#fff3e0;text-shadow:0 0 12px var(--ember);margin-top:56px}
+.sub{text-align:center;color:var(--muted)}
+.acct{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.acct img{width:110px;height:auto;image-rendering:pixelated;filter:drop-shadow(0 0 12px var(--ember))}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
+.row strong{color:var(--gold)}
+.field{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.field input{flex:1;min-width:130px;border:1px solid rgba(255,90,31,.6);border-radius:10px;padding:6px 12px;background:rgba(255,255,255,.07)}
+.status{margin-top:12px;color:var(--muted);white-space:pre-line}
+.on{color:#7dff9a}.off{color:#ff8a7a}
+.ebooks{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:20px}
+.ebooks a{display:block;text-decoration:none;color:var(--text);text-align:center;padding:20px 12px;border-radius:14px;background:var(--card);border:1px solid var(--ember);transition:.2s;font-family:var(--display);font-size:.95rem}
+.ebooks a:hover{transform:translateY(-4px);box-shadow:var(--glow);color:var(--gold)}
+.ebooks span{display:block;font-size:2rem;margin-bottom:6px}
+.player{display:grid;grid-template-columns:220px 1fr;gap:26px;align-items:start}
+.player img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;border:2px solid var(--ember);box-shadow:var(--glow);background:#2a0c06}
+.player h3{font-size:1.5rem}
+.tag{display:inline-block;margin:2px 0 10px;color:var(--ember);font-weight:600;font-style:italic}
+blockquote{margin:14px 0;padding:10px 16px;border-left:4px solid var(--ember);background:rgba(255,90,31,.1);border-radius:0 10px 10px 0;color:var(--muted)}
+.player ul{list-style:none}.player a{color:var(--gold);font-weight:600}.player a:hover{color:#fff}
 .empty{display:none;text-align:center;margin-top:30px;color:var(--muted)}
-
-footer{text-align:center;padding:26px 5vw;background:rgba(12,4,3,.9);border-top:1px solid rgba(255,90,31,.55);color:var(--muted)}
+footer{position:relative;z-index:1;text-align:center;padding:24px 5vw;background:rgba(12,4,3,.92);border-top:1px solid rgba(255,90,31,.55);color:var(--muted)}
 footer strong{color:var(--gold)}
-#top{
-  position:fixed;right:18px;bottom:18px;z-index:30;width:46px;height:46px;border-radius:50%;
-  border:1px solid var(--gold);background:rgba(12,4,3,.9);color:var(--gold);font-size:1.3rem;cursor:pointer;
-  box-shadow:var(--glow);display:none;
-}
+#top{position:fixed;right:20px;bottom:88px;z-index:30;width:44px;height:44px;border-radius:50%;border:1px solid var(--gold);background:rgba(12,4,3,.92);color:var(--gold);font-size:1.2rem;cursor:pointer;box-shadow:var(--glow);display:none}
 #top.show{display:block}
-
-@media (max-width:700px){
-  .player{grid-template-columns:1fr}
-  .player img{max-width:260px}
-  .search input{width:120px}
-}
-@media (prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-  .hero h1.welcome{animation:none}
-  .btn,nav a{transition:none}
-}
+/* Netherite AI */
+#aiBtn{position:fixed;right:20px;bottom:20px;z-index:40;border:0;border-radius:999px;padding:12px 18px;font:inherit;font-weight:600;cursor:pointer;color:#fff3e0;background:linear-gradient(135deg,#3a2a30,#150a0c);border:1px solid var(--gold);box-shadow:var(--glow)}
+#ai{position:fixed;right:20px;bottom:76px;z-index:40;width:min(370px,92vw);height:min(480px,70vh);display:none;flex-direction:column;background:#120605;border:1px solid var(--gold);border-radius:16px;box-shadow:0 0 40px rgba(255,90,31,.5);overflow:hidden}
+#ai.open{display:flex}
+.ai-head{padding:12px 14px;background:linear-gradient(90deg,#3a1208,#1a0805);border-bottom:1px solid var(--ember);font-family:var(--display);font-size:.9rem;color:var(--gold)}
+.ai-head small{display:block;font-family:var(--body);color:var(--muted);font-size:.85rem}
+#log{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.m{max-width:85%;padding:8px 12px;border-radius:12px;font-size:1rem;line-height:1.4;white-space:pre-line}
+.m.bot{background:rgba(255,90,31,.16);border:1px solid rgba(255,90,31,.5);align-self:flex-start}
+.m.me{background:linear-gradient(90deg,var(--gold),var(--ember));color:#1a0502;align-self:flex-end;font-weight:600}
+.sug{display:flex;gap:6px;flex-wrap:wrap;padding:0 12px 8px}
+.sug .chip{font-size:.85rem}
+.ai-in{display:flex;gap:6px;padding:10px;border-top:1px solid rgba(255,90,31,.5)}
+.ai-in input{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,90,31,.6);border-radius:10px;color:var(--text);font:inherit;padding:6px 10px}
+@media(max-width:700px){.player{grid-template-columns:1fr}.player img{max-width:260px}.search input{width:90px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hero h1{animation:none}.btn,nav a,.ebooks a{transition:none}}
 </style>
 </head>
 <body>
 <canvas id="fire" aria-hidden="true"></canvas>
-
 <div class="page">
-  <header id="home">
-    <a class="logo" href="#home">XOCASSEY 🔥</a>
-    <nav aria-label="Main">
-      <a href="https://xocassey.github.io/minecraft/ebook%20store%20xo%20cassey.html">Ebooks</a>
-      <a href="https://mctiers.com/rankings/overall">PVP Rankings</a>
-    </nav>
-    <label class="search">
-      <span aria-hidden="true">🔎</span>
-      <input id="q" type="search" placeholder="Search players" aria-label="Search players">
-    </label>
-  </header>
+<header id="home">
+  <a class="logo" href="#home">MINECRAFT HUB 🔥</a>
+  <nav aria-label="Main">
+    <a href="#home">Home</a>
+    <a href="https://xocassey.github.io/minecraft/ebook%20store%20xo%20cassey.html">Ebooks</a>
+    <a href="#players">Players</a>
+    <a href="#tools">Tools</a>
+    <a href="https://mctiers.com/rankings/overall">PVP Rankings</a>
+  </nav>
+  <div class="tools-bar">
+    <label class="search"><span aria-hidden="true">🔎</span><input id="q" type="search" placeholder="Search players" aria-label="Search players"></label>
+    <button class="fire-btn" id="fireBtn" aria-label="Change flame intensity">🔥 High</button>
+  </div>
+</header>
 
-  <main>
-    <section class="hero">
-      <h1 class="welcome">💎💥💖Welcome to Xocassey Web!💖💥💎</h1>
-      <div class="panel">
-        <h2>💥💖Minecraft💖💥</h2>
-        <p>Minecraft ebooks are the best ebooks for minecraft players. We have a wide variety of ebooks that will help you improve your minecraft skills and knowledge. Whether you’re a beginner or an experienced player, we have something for everyone. Our ebooks cover a wide range of topics, including building, redstone, survival, and more. We also have a section dedicated to minecraft mods and plugins, where you can find the latest and greatest mods to enhance your minecraft experience. So why wait? Start exploring our collection of minecraft ebooks today and take your minecraft skills to the next level!</p>
-      </div>
-    </section>
+<main>
+<section class="hero">
+  <p class="welcome">💎💥💖Welcome to Xocassey Web!💖💥💎</p>
+  <h1>Minecraft Hub</h1>
+  <div class="panel center">
+    <h2>💥💖Minecraft💖💥</h2>
+    <p>Minecraft ebooks are the best ebooks for minecraft players. We have a wide variety of ebooks that will help you improve your minecraft skills and knowledge. Whether you’re a beginner or an experienced player, we have something for everyone. Our ebooks cover a wide range of topics, including building, redstone, survival, and more. We also have a section dedicated to minecraft mods and plugins, where you can find the latest and greatest mods to enhance your minecraft experience. So why wait? Start exploring our collection of minecraft ebooks today and take your minecraft skills to the next level!</p>
+    <button class="btn" data-ask>🤖 Ask Netherite AI</button>
+    <a class="btn alt" href="https://xocassey.github.io/minecraft/ebook%20store%20xo%20cassey.html">Browse Ebooks</a>
+  </div>
+</section>
 
-    <section class="panel accounts" aria-labelledby="acc">
-      <h3 id="acc">My accounts</h3>
-      <p><strong>Minecraft Username:</strong> Netherite_VI</p>
-      <p><strong>Discord:</strong> netherite_vi</p>
-      <a class="btn" href="https://xocassey.github.io/minecraft/server_conquered.html">Server I conquered</a>
-    </section>
+<div class="ebooks" aria-label="Ebook topics">
+  <a href="https://xocassey.github.io/minecraft/ebook%20store%20xo%20cassey.html"><span>🧱</span>Building</a>
+  <a href="https://xocassey.github.io/minecraft/ebook%20store%20xo%20cassey.html"><span>🔴</span>Redstone</a>
+  <a href="https://xocassey.github.io/minecraft/ebook%20store%20xo%20cassey.html"><span>🛡️</span>Survival</a>
+  <a href="https://xocassey.github.io/minecraft/ebook%20store%20xo%20cassey.html"><span>🧩</span>Mods &amp; Plugins</a>
+</div>
 
-    <section id="players">
-      <div class="players-head">
-        <h2>💥MINECRAFT PLAYERS💥</h2>
-        <h3>Top Minecraft Players</h3>
-        <p>Here are some of the top minecraft players in the world:</p>
-      </div>
+<section class="panel" aria-labelledby="acc">
+  <h3 id="acc">My accounts</h3>
+  <div class="acct">
+    <img id="skin" src="https://minotar.net/armor/bust/Netherite_VI/150.png" alt="Minecraft skin of Netherite_VI">
+    <div>
+      <div class="row"><strong>Minecraft Username:</strong> Netherite_VI <button class="chip" data-copy="Netherite_VI">Copy</button></div>
+      <div class="row"><strong>Discord:</strong> netherite_vi <button class="chip" data-copy="netherite_vi">Copy</button></div>
+      <a class="btn" style="margin-left:0" href="https://xocassey.github.io/minecraft/server_conquered.html">Server I conquered</a>
+    </div>
+  </div>
+  <form class="field" id="skinForm">
+    <input id="skinName" placeholder="Look up any player’s skin" aria-label="Minecraft username" maxlength="16">
+    <button class="chip" type="submit">Show skin</button>
+  </form>
+</section>
 
-      <article class="panel player">
-        <img src="https://xocassey.github.io/minecraft/flame%20pvp.jpg" alt="FlameFrags">
-        <div>
-          <h3>#1.FRAMEFRAGS</h3>
-          <span class="tag">(Immortal Demon)</span>
-          <p>known for his pvp skills and his ability to win fights against multiple opponents at once. He is also known for his entertaining commentary and his ability to make even the most mundane minecraft gameplay exciting to watch.</p>
-          <blockquote>“FlameFrags is a popular Minecraft YouTuber known for his Survival Multiplayer (SMP) adventures, PvP challenges, and high-stakes gameplay across various servers.”</blockquote>
-          <ul><li><a href="https://www.youtube.com/@FlameFragsMC">FlameFrags YouTube Channel</a></li></ul>
-        </div>
-      </article>
+<section id="players">
+  <h2 class="sec-title">💥MINECRAFT PLAYERS💥</h2>
+  <p class="sub"><strong>Top Minecraft Players</strong><br>Here are some of the top minecraft players in the world:</p>
 
-      <article class="panel player">
-        <img src="https://xocassey.github.io/minecraft/dreammon.jpg" alt="Dream">
-        <div>
-          <h3>#2.DREAM</h3>
-          <span class="tag">(best minecraft speedrunner...)</span>
-          <p>known for his speedrunning skills and his ability to complete minecraft challenges in record time. He is also known for his entertaining commentary and his ability to make even the most mundane minecraft gameplay exciting to watch.</p>
-          <blockquote>“Dream is a popular Minecraft YouTuber and content creator known for his Minecraft Manhunt series, where he attempts to complete the game while being hunted by other players.”</blockquote>
-          <ul><li><a href="https://www.youtube.com/@dream">Dream YouTube Channel</a></li></ul>
-        </div>
-      </article>
+  <article class="panel player">
+    <img src="https://xocassey.github.io/minecraft/flame%20pvp.jpg" alt="FlameFrags">
+    <div>
+      <h3>#1.FRAMEFRAGS</h3><span class="tag">(Immortal Demon)</span>
+      <p>known for his pvp skills and his ability to win fights against multiple opponents at once. He is also known for his entertaining commentary and his ability to make even the most mundane minecraft gameplay exciting to watch.</p>
+      <blockquote>“FlameFrags is a popular Minecraft YouTuber known for his Survival Multiplayer (SMP) adventures, PvP challenges, and high-stakes gameplay across various servers.”</blockquote>
+      <ul><li><a href="https://www.youtube.com/@FlameFragsMC">FlameFrags YouTube Channel</a></li></ul>
+    </div>
+  </article>
 
-      <article class="panel player">
-        <img src="https://xocassey.github.io/minecraft/judelow.jpg" alt="JudeLow">
-        <div>
-          <h3>#3.JUDELOW</h3>
-          <span class="tag">(best trap builder)</span>
-          <p>known for his trap-building skills and his ability to create complex and effective traps that can catch even the most experienced players off guard. He is also known for his entertaining commentary and his ability to make even the most mundane minecraft gameplay exciting to watch.</p>
-          <blockquote>“JudeLow is a popular Minecraft YouTuber and content creator widely recognized as one of the game’s most skilled ‘trappers’. He is known for inventing and utilizing complex, often unknown game mechanics to create inescapable or one-shot traps in various Survival Multiplayer (SMP) servers.”</blockquote>
-          <ul><li><a href="https://www.youtube.com/@JudeLoSasso">JudeLow YouTube Channel</a></li></ul>
-        </div>
-      </article>
+  <article class="panel player">
+    <img src="https://xocassey.github.io/minecraft/dreammon.jpg" alt="Dream">
+    <div>
+      <h3>#2.DREAM</h3><span class="tag">(best minecraft speedrunner...)</span>
+      <p>known for his speedrunning skills and his ability to complete minecraft challenges in record time. He is also known for his entertaining commentary and his ability to make even the most mundane minecraft gameplay exciting to watch.</p>
+      <blockquote>“Dream is a popular Minecraft YouTuber and content creator known for his Minecraft Manhunt series, where he attempts to complete the game while being hunted by other players.”</blockquote>
+      <ul><li><a href="https://www.youtube.com/@dream">Dream YouTube Channel</a></li></ul>
+    </div>
+  </article>
 
-      <p class="empty" id="empty">😕 No players found. Try another search.</p>
-    </section>
-  </main>
+  <article class="panel player">
+    <img src="https://xocassey.github.io/minecraft/judelow.jpg" alt="JudeLow">
+    <div>
+      <h3>#3.JUDELOW</h3><span class="tag">(best trap builder)</span>
+      <p>known for his trap-building skills and his ability to create complex and effective traps that can catch even the most experienced players off guard. He is also known for his entertaining commentary and his ability to make even the most mundane minecraft gameplay exciting to watch.</p>
+      <blockquote>“JudeLow is a popular Minecraft YouTuber and content creator widely recognized as one of the game’s most skilled ‘trappers’. He is known for inventing and utilizing complex, often unknown game mechanics to create inescapable or one-shot traps in various Survival Multiplayer (SMP) servers.”</blockquote>
+      <ul><li><a href="https://www.youtube.com/@JudeLoSasso">JudeLow YouTube Channel</a></li></ul>
+    </div>
+  </article>
+  <p class="empty" id="empty">😕 No players found. Try another search.</p>
+</section>
 
-  <footer>by <strong>Cassey M Davidson</strong></footer>
+<h2 class="sec-title" id="tools">🛠️ Hub Tools</h2>
+<div class="grid">
+  <section class="panel" aria-labelledby="srv">
+    <h3 id="srv">Server status checker</h3>
+    <p>Check if a Java server is online and how many players are on.</p>
+    <form class="field" id="srvForm">
+      <input id="srvIp" placeholder="play.example.net" aria-label="Server address">
+      <button class="chip" type="submit">Check</button>
+    </form>
+    <p class="status" id="srvOut" aria-live="polite"></p>
+  </section>
+  <section class="panel" aria-labelledby="tip">
+    <h3 id="tip">💡 Tip of the day</h3>
+    <p id="tipText"></p>
+    <button class="chip" id="tipNext" style="margin-top:12px">Another tip</button>
+  </section>
+</div>
+</main>
+
+<footer>by <strong>Cassey M Davidson</strong></footer>
 </div>
 
 <button id="top" aria-label="Back to top">↑</button>
+<button id="aiBtn" aria-expanded="false" aria-controls="ai">🤖 Netherite AI</button>
+<section id="ai" aria-label="Netherite AI chat">
+  <div class="ai-head">NETHERITE AI<small>Your Minecraft guide. Ask me anything.</small></div>
+  <div id="log" aria-live="polite"></div>
+  <div class="sug" id="sug"></div>
+  <form class="ai-in" id="aiForm">
+    <input id="aiIn" placeholder="Ask about Minecraft…" aria-label="Message Netherite AI" autocomplete="off">
+    <button class="chip" type="submit">Send</button>
+  </form>
+</section>
 
 <script>
-/* ---- flame background ---- */
+/* ===== flame background ===== */
+var fireLevel=1;
 (function(){
   var c=document.getElementById('fire'),x=c.getContext('2d'),W,H,P=[];
-  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   function size(){W=c.width=innerWidth;H=c.height=innerHeight}
   addEventListener('resize',size);size();
-
   function spawn(){
-    var ember=Math.random()<.15;
-    P.push({
-      x:Math.random()*W, y:H+20,
-      r:ember?2+Math.random()*3:35+Math.random()*60,
-      vy:ember?2+Math.random()*3.5:1+Math.random()*2.2,
-      vx:(Math.random()-.5)*.8,
-      life:0, max:ember?160+Math.random()*100:70+Math.random()*80,
-      e:ember
-    });
+    var e=Math.random()<.15;
+    P.push({x:Math.random()*W,y:H+20,r:e?2+Math.random()*3:35+Math.random()*60,vy:e?2+Math.random()*3.5:1+Math.random()*2.2,vx:(Math.random()-.5)*.8,life:0,max:e?160+Math.random()*100:70+Math.random()*80,e:e});
   }
   function tick(t){
-    x.globalCompositeOperation='source-over';
-    x.clearRect(0,0,W,H);
-    x.globalCompositeOperation='lighter';
-    var n=Math.ceil(W/320);
+    x.globalCompositeOperation='source-over';x.clearRect(0,0,W,H);x.globalCompositeOperation='lighter';
+    var n=Math.ceil(W/320*fireLevel);
     for(var s=0;s<n;s++)spawn();
     for(var i=P.length-1;i>=0;i--){
-      var p=P[i];p.life++;p.y-=p.vy;
-      p.x+=p.vx+Math.sin((p.y+t/10)/40)*.6;
-      var k=p.life/p.max;
-      if(k>=1){P.splice(i,1);continue}
-      var r=p.e?p.r:p.r*(1-k*.7);
-      var g=x.createRadialGradient(p.x,p.y,0,p.x,p.y,r);
-      var hue=52-k*50,a=p.e?(1-k)*.9:(1-k)*.2;
-      g.addColorStop(0,'hsla('+hue+',100%,'+(62-k*20)+'%,'+a+')');
-      g.addColorStop(1,'hsla(8,100%,40%,0)');
+      var p=P[i];p.life++;p.y-=p.vy;p.x+=p.vx+Math.sin((p.y+t/10)/40)*.6;
+      var k=p.life/p.max;if(k>=1){P.splice(i,1);continue}
+      var r=p.e?p.r:p.r*(1-k*.7),g=x.createRadialGradient(p.x,p.y,0,p.x,p.y,r),a=p.e?(1-k)*.9:(1-k)*.2;
+      g.addColorStop(0,'hsla('+(52-k*50)+',100%,'+(62-k*20)+'%,'+a+')');g.addColorStop(1,'hsla(8,100%,40%,0)');
       x.fillStyle=g;x.beginPath();x.arc(p.x,p.y,r,0,6.2832);x.fill();
     }
   }
-  if(reduce){for(var j=0;j<150;j++)tick(0)}
-  else{(function loop(t){tick(t);requestAnimationFrame(loop)})(0)}
+  if(reduce){for(var j=0;j<150;j++)tick(0)}else{(function loop(t){tick(t);requestAnimationFrame(loop)})(0)}
+})();
+(function(){
+  var b=document.getElementById('fireBtn'),modes=[['🔥 High',1],['🔥 Low',.35],['🔥 Off',0]],i=0;
+  b.onclick=function(){i=(i+1)%3;b.textContent=modes[i][0];fireLevel=modes[i][1]};
 })();
 
-/* ---- player search ---- */
+/* ===== player search ===== */
 (function(){
-  var q=document.getElementById('q'),cards=document.querySelectorAll('.player'),empty=document.getElementById('empty');
+  var q=document.getElementById('q'),cards=document.querySelectorAll('.player'),em=document.getElementById('empty');
   q.addEventListener('input',function(){
-    var v=q.value.trim().toLowerCase(),shown=0;
-    cards.forEach(function(card){
-      var ok=!v||card.textContent.toLowerCase().indexOf(v)>-1;
-      card.style.display=ok?'':'none';
-      if(ok)shown++;
-    });
-    empty.style.display=shown?'none':'block';
+    var v=q.value.trim().toLowerCase(),n=0;
+    cards.forEach(function(c){var ok=!v||c.textContent.toLowerCase().indexOf(v)>-1;c.style.display=ok?'':'none';if(ok)n++});
+    em.style.display=n?'none':'block';
   });
 })();
 
-/* ---- back to top ---- */
+/* ===== copy buttons, skin lookup, back to top ===== */
+document.querySelectorAll('[data-copy]').forEach(function(b){
+  b.onclick=function(){
+    var t=b.dataset.copy;
+    (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){b.textContent='Copied!'}).catch(function(){b.textContent='Press Ctrl+C'});
+    setTimeout(function(){b.textContent='Copy'},1500);
+  };
+});
+document.getElementById('skinForm').onsubmit=function(e){
+  e.preventDefault();
+  var n=document.getElementById('skinName').value.trim();
+  if(!/^\w{3,16}$/.test(n))return;
+  var im=document.getElementById('skin');
+  im.src='https://minotar.net/armor/bust/'+n+'/150.png';im.alt='Minecraft skin of '+n;
+};
 (function(){
   var b=document.getElementById('top');
   addEventListener('scroll',function(){b.classList.toggle('show',scrollY>400)});
-  b.addEventListener('click',function(){scrollTo({top:0})});
+  b.onclick=function(){scrollTo({top:0})};
+})();
+
+/* ===== server status ===== */
+document.getElementById('srvForm').onsubmit=function(e){
+  e.preventDefault();
+  var ip=document.getElementById('srvIp').value.trim(),out=document.getElementById('srvOut');
+  if(!ip)return;
+  out.className='status';out.textContent='Checking…';
+  fetch('https://api.mcsrvstat.us/3/'+encodeURIComponent(ip)).then(function(r){return r.json()}).then(function(d){
+    if(d.online){
+      out.className='status on';
+      out.textContent='● Online\n'+(d.motd&&d.motd.clean?d.motd.clean.join(' '):'')+'\nPlayers: '+d.players.online+' / '+d.players.max+'\nVersion: '+(d.version||'unknown');
+    }else{out.className='status off';out.textContent='● Offline or not found'}
+  }).catch(function(){out.className='status off';out.textContent='Could not reach the status service. Try again later.'});
+};
+
+/* ===== tip of the day ===== */
+(function(){
+  var tips=['Place a water bucket under you when falling to cancel fall damage.','Sleep in a bed to skip the night and set your spawn point.','Diamonds generate most often near the bottom of the world, around Y -59.','Use Mending books on your best tools so XP keeps them repairing.','Pillar up with blocks and look down to place them under your feet.','Carry a few ender pearls: they are your best escape and travel tool.','Light up caves and bases with torches to stop mobs from spawning.','A shield blocks arrows, explosions and sword hits when timed right.','Stack Efficiency V and Unbreaking III on a pickaxe for fast, long-lasting mining.','Bring a bucket of water into the Nether to put out fire and cross lava.'];
+  var el=document.getElementById('tipText'),i=Math.floor(Date.now()/864e5)%tips.length;
+  function show(){el.textContent=tips[i]}
+  show();document.getElementById('tipNext').onclick=function(){i=(i+1)%tips.length;show()};
+})();
+
+/* ===== Netherite AI ===== */
+(function(){
+  /* Optional: put your own backend URL here to use a real AI model.
+     It should accept POST {message} and return JSON {reply}. Leave empty to use the built-in guide. */
+  var API='';
+  var KB=[
+   [['hello','hi','hey','yo'],'Hey! I am Netherite AI. Ask me about portals, diamonds, redstone, PvP, bosses, mods, or this site.'],
+   [['nether portal','portal','obsidian'],'Nether portal: build a frame of obsidian (10 blocks is enough, corners are optional) and light it with flint and steel. Make obsidian by pouring water on lava source blocks, and mine it with a diamond or netherite pickaxe.'],
+   [['netherite','ancient debris','scrap'],'Netherite: mine ancient debris in the Nether (most common around Y 15). Smelt it into scrap, then craft 4 scrap + 4 gold ingots into 1 netherite ingot. Upgrade diamond gear at a smithing table with an upgrade template + ingot.'],
+   [['diamond'],'Diamonds are most common deep underground, around Y -59 in newer versions. Branch mine or explore caves, and bring an iron pickaxe or better. Fortune III increases drops.'],
+   [['dragon','end','stronghold','eye of ender'],'Ender Dragon: craft eyes of ender (ender pearl + blaze powder) to find a stronghold, activate the End portal, then destroy the end crystals on the pillars. Hit the dragon when it perches. Bring a bow, blocks and a water bucket.'],
+   [['wither'],'Wither: build a T shape of 4 soul sand or soul soil, add 3 wither skeleton skulls on top. Do it in an open area, away from your base, with strong armor and a good weapon.'],
+   [['pvp','fight','combat','sword'],'PvP tips: use Sharpness gear and Protection armor, land critical hits by attacking while falling, keep a shield and golden apples ready, strafe to dodge, and practice sprint resets.'],
+   [['speedrun','manhunt','dream'],'Speedrun basics: find a ruined portal or village, barter with piglins for ender pearls, collect blaze rods, craft eyes of ender, then beat the dragon. Dream is known for his Manhunt series.'],
+   [['trap','judelow'],'Traps use pistons, tripwires, pressure plates, lava and ender pearl stasis chambers. Only use them on servers that allow trapping, and never grief other players.'],
+   [['redstone','piston','hopper','comparator','repeater'],'Redstone starter path: dust and torches, then repeaters and comparators, then pistons, observers and hoppers. Try a hidden door, an item sorter, then an auto farm.'],
+   [['enchant','mending','unbreaking','sharpness','efficiency'],'Great enchants: Mending, Unbreaking III, Efficiency V (tools), Protection IV (armor), Sharpness V (sword), Fortune III (mining). Combine books on an anvil.'],
+   [['start','begin','survival','first night','new'],'First day: punch trees, craft a table and wooden tools, mine coal and stone, get food, then build a shelter and craft a bed before night.'],
+   [['mod','plugin','fabric','forge','server'],'Mods: Fabric or NeoForge loaders, with Sodium, Lithium and Iris for speed and shaders. Server plugins: Paper, EssentialsX and LuckPerms are popular. Our ebooks cover mods and plugins.'],
+   [['ebook','book','store','buy'],'Our ebooks cover building, redstone, survival, and mods and plugins. Use the Ebooks link in the menu to open the store.'],
+   [['discord','username','account','netherite_vi','who is cassey','owner'],'Minecraft username: Netherite_VI. Discord: netherite_vi. The site is by Cassey M Davidson.'],
+   [['rank','tier','top player'],'Top players on this site: FlameFrags (PvP), Dream (speedrunning) and JudeLow (traps). Check the PVP Rankings link for the live list.'],
+   [['joke','funny'],'Why did the creeper cross the road? To get to the other SSSSS-ide.'],
+   [['thank'],'Anytime! Good luck out there, and watch out for lava.'],
+   [['who are you','your name','what are you'],'I am Netherite AI, the guide for Minecraft Hub. I am a built-in assistant that knows Minecraft basics and this site.']
+  ];
+  var sugs=['How do I get netherite?','Best PvP tips','Nether portal','Redstone ideas'];
+  var panel=document.getElementById('ai'),btn=document.getElementById('aiBtn'),log=document.getElementById('log'),inp=document.getElementById('aiIn'),sug=document.getElementById('sug');
+  function add(t,who){var d=document.createElement('div');d.className='m '+who;d.textContent=t;log.appendChild(d);log.scrollTop=log.scrollHeight;return d}
+  function local(msg){
+    var m=msg.toLowerCase(),best=null,score=0;
+    KB.forEach(function(e){var s=0;e[0].forEach(function(k){if(m.indexOf(k)>-1)s+=k.length});if(s>score){score=s;best=e}});
+    return best?best[1]:'I am not sure about that one. Try asking about netherite, diamonds, portals, PvP, redstone, bosses, mods, or our ebooks.';
+  }
+  function ask(msg){
+    add(msg,'me');var t=add('…','bot');
+    var done=function(r){setTimeout(function(){t.textContent=r;log.scrollTop=log.scrollHeight},450)};
+    if(API){
+      fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg})})
+        .then(function(r){return r.json()}).then(function(d){done(d.reply||local(msg))}).catch(function(){done(local(msg))});
+    }else done(local(msg));
+  }
+  function open(v){panel.classList.toggle('open',v);btn.setAttribute('aria-expanded',v);if(v)inp.focus()}
+  btn.onclick=function(){open(!panel.classList.contains('open'))};
+  document.querySelectorAll('[data-ask]').forEach(function(b){b.onclick=function(){open(true)}});
+  sugs.forEach(function(s){var b=document.createElement('button');b.className='chip';b.type='button';b.textContent=s;b.onclick=function(){ask(s)};sug.appendChild(b)});
+  document.getElementById('aiForm').onsubmit=function(e){e.preventDefault();var v=inp.value.trim();if(!v)return;inp.value='';ask(v)};
+  add('Hi, I am Netherite AI. Ask me anything about Minecraft or this site.','bot');
 })();
 </script>
 </body>
