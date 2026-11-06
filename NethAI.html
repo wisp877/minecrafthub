@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090707">
+<title>Netherite AI | Minecraft Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #090707;
+    --panel: #130d0c;
+    --panel-2: #1c1311;
+    --line: rgba(255, 106, 26, .28);
+    --accent: #ff6a1a;
+    --ember: #ffb347;
+    --text: #f4ebe6;
+    --muted: #a89690;
+    --font-head: "Space Grotesk", "Inter", system-ui, sans-serif;
+    --font-body: "Inter", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", "Courier New", monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh; color: var(--text); font-family: var(--font-body);
+    background:
+      radial-gradient(ellipse at 50% 110%, rgba(255,90,0,.35), transparent 60%),
+      radial-gradient(circle at 15% 0%, rgba(255,60,0,.10), transparent 40%),
+      var(--bg);
+    display: flex; flex-direction: column; align-items: center; padding: 20px;
+  }
+  .flames { position: fixed; inset: auto 0 0 0; height: 30vh; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 100%, rgba(255,120,0,.45), transparent 70%);
+    animation: flicker 2s infinite alternate; }
+  @keyframes flicker { from { opacity: .55; } to { opacity: 1; } }
+
+  header { text-align: center; margin: 14px 0 22px; position: relative; }
+  .eyebrow { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--ember); border: 1px solid var(--line); border-radius: 999px; display: inline-block;
+    padding: 5px 14px; background: rgba(255,106,26,.08); margin-bottom: 14px; }
+  header h1 { font-family: var(--font-head); font-weight: 700; font-size: clamp(2rem, 6vw, 3.2rem);
+    letter-spacing: -.02em; line-height: 1.05;
+    background: linear-gradient(90deg, var(--ember), var(--accent) 60%, #ff3d00);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 0 18px rgba(255,90,0,.45)); }
+  header p { color: var(--muted); font-size: .95rem; margin: 10px auto 0; max-width: 520px; line-height: 1.55; }
+  header a { display: inline-block; margin-top: 10px; color: var(--ember); font-family: var(--font-mono); font-size: .78rem; text-decoration: none; }
+  header a:hover { text-decoration: underline; }
+
+  .chat { position: relative; width: 100%; max-width: 820px; display: flex; flex-direction: column;
+    background: rgba(19,13,12,.92); border: 1px solid var(--line); border-radius: 16px; overflow: hidden;
+    box-shadow: 0 20px 60px rgba(255,70,0,.12); }
+  #log { height: 55vh; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+  .msg { max-width: 90%; padding: 11px 15px; border-radius: 12px; line-height: 1.6; word-wrap: break-word; font-size: .92rem; }
+  .msg .txt { white-space: pre-wrap; }
+  .user { align-self: flex-end; background: linear-gradient(135deg, #ff6a1a, #c2410c); color: #1a0700; font-weight: 500; }
+  .ai { align-self: flex-start; background: var(--panel-2); border: 1px solid var(--line); }
+  .imgbox { margin: 10px 0 4px; }
+  .imgbox img { display: block; max-width: 100%; width: 384px; image-rendering: pixelated; border: 2px solid var(--line); border-radius: 8px; background: var(--bg); }
+  .imgbtns { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .imgbtns button { background: rgba(255,106,26,.12); color: var(--ember); border: 1px solid var(--line); border-radius: 8px;
+    padding: 6px 11px; cursor: pointer; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .04em; text-transform: uppercase; }
+  .imgbtns button:hover { background: rgba(255,106,26,.25); }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 18px 12px; }
+  .chips button { background: var(--panel-2); color: var(--ember); border: 1px solid var(--line); border-radius: 999px;
+    padding: 7px 13px; cursor: pointer; font-family: var(--font-mono); font-size: .72rem; }
+  .chips button:hover { background: rgba(255,106,26,.18); box-shadow: 0 0 14px rgba(255,106,26,.25); }
+
+  form.ask { display: flex; gap: 8px; padding: 14px; border-top: 1px solid var(--line); }
+  input[type=text], input[type=password] { flex: 1; padding: 12px 14px; background: var(--bg); border: 1px solid var(--line);
+    border-radius: 10px; color: var(--text); font-family: var(--font-body); font-size: .9rem; min-width: 0; }
+  input::placeholder { color: #75655f; }
+  input:focus { outline: 2px solid var(--accent); }
+  .btn { padding: 10px 20px; background: linear-gradient(135deg, var(--ember), var(--accent)); color: #1a0700; border: 0; border-radius: 10px;
+    font-family: var(--font-head); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; cursor: pointer;
+    box-shadow: 0 0 18px rgba(255,106,26,.35); }
+  .btn:hover { filter: brightness(1.1); }
+  .btn:disabled { opacity: .5; cursor: wait; }
+  .tog { padding: 0 14px; background: var(--panel-2); color: var(--ember); border: 1px solid var(--line); border-radius: 10px; cursor: pointer; font-size: 1.1rem; }
+  .tog.on { background: var(--accent); color: #1a0700; box-shadow: 0 0 16px rgba(255,106,26,.5); }
+  .link { background: none; border: 0; color: var(--muted); cursor: pointer; font-family: var(--font-mono); font-size: .72rem; text-decoration: underline; }
+
+  details { border-top: 1px solid var(--line); padding: 12px 18px; font-size: .82rem; }
+  summary { cursor: pointer; color: var(--ember); font-family: var(--font-mono); font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; }
+  .row { display: flex; gap: 8px; margin: 8px 0; flex-wrap: wrap; align-items: center; }
+  .note { color: var(--muted); font-size: .75rem; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="flames"></div>
+
+<header>
+  <div class="eyebrow">Minecraft Hub • Netherfire Edition</div>
+  <h1>Netherite AI</h1>
+  <p>Ask anything about Minecraft, or have it forge pixel-art images.</p>
+  <a href="index.html">&larr; Back to Minecraft Hub</a>
+</header>
+
+<div class="chat">
+  <div id="log"></div>
+  <div class="chips" id="chips"></div>
+  <form class="ask" id="form">
+    <button type="button" class="tog" id="imgToggle" title="Image mode: generate a Minecraft image">🎨</button>
+    <input type="text" id="input" placeholder="Ask anything Minecraft, or type /image diamond sword" maxlength="2000" autocomplete="off">
+    <button class="btn" id="send" type="submit">Send</button>
+  </form>
+  <div style="text-align:center; padding-bottom:8px;"><button class="link" id="clear" type="button">Clear chat</button></div>
+
+  <details id="settings">
+    <summary>Settings &amp; database</summary>
+    <p class="note">Your key is stored only in this browser and sent only to Anthropic (or to your own backend if you set one).</p>
+    <div class="row"><input type="password" id="apiKey" placeholder="Anthropic API key (sk-ant-...)" autocomplete="off"></div>
+    <div class="row"><input type="text" id="backendUrl" placeholder="Optional backend URL (uses /api/chat instead of a key)"></div>
+    <div class="row">
+      <label class="note"><input type="checkbox" id="webSearch"> Live web search (latest updates and snapshots; direct API mode only)</label>
+    </div>
+    <div class="row"><button class="btn" id="saveSettings" type="button">Save settings</button></div>
+    <p class="note" style="margin-top:12px;">Add a fact to the Minecraft knowledge database:</p>
+    <div class="row">
+      <input type="text" id="factTopic" placeholder="Topic (e.g. elytra)">
+      <input type="text" id="factText" placeholder="Fact (e.g. Repair with phantom membranes)">
+      <button class="btn" id="addFact" type="button">Add</button>
+    </div>
+    <p class="note" id="factCount"></p>
+  </details>
+</div>
+
+<script>
+/* ================= CONFIG ================= */
+const MODEL = 'claude-sonnet-5-5';
+
+const SYSTEM_BASE =
+  'You are Netherite AI, the all-knowing assistant for Minecraft Hub. Answer every Minecraft question: ' +
+  'gameplay, survival, creative, crafting recipes, redstone, farms, mobs, biomes, structures, enchanting, ' +
+  'brewing, trading, commands, command blocks, datapacks, resource packs, shaders, mods (Fabric, Forge, NeoForge), ' +
+  'plugins, servers (Paper, Spigot, hosting, setup), seeds, world generation, speedrunning, PvP, Realms, ' +
+  'Bedrock vs Java differences, Minecraft Education, Dungeons, Legends, Story Mode, lore, history, updates, ' +
+  'skins, texture packs, builds, and troubleshooting crashes or performance. ' +
+  'Be accurate and practical, give step-by-step instructions or exact commands when useful, and state the ' +
+  'edition (Java/Bedrock) and version when it matters. Your knowledge may lag behind the newest updates, so ' +
+  'say so when asked about very recent changes. If a question is not about Minecraft, briefly say you focus ' +
+  'on Minecraft and offer a Minecraft-related angle. Never invent recipes, commands, or version facts.';
+
+const IMAGE_RULES =
+  'IMAGE REQUEST: Create the requested Minecraft-style pixel-art image as ONE complete SVG. Rules: ' +
+  'use a pixel grid viewBox (16x16 for items/blocks/mob faces, 32x32 for characters/skins/logos, ' +
+  'up to 64x36 for scenes); draw with <rect> elements on whole-number coordinates, merging runs of ' +
+  'same-colored pixels into wider rects to keep it compact; include shape-rendering="crispEdges"; ' +
+  'use a Minecraft-accurate color palette with simple shading (lighter top, darker bottom/edges); ' +
+  'no scripts, no external images, no <foreignObject>, no text unless asked. ' +
+  'Reply with one short caption line, then the SVG inside a ```svg code fence, and nothing else.';
+
+/* ================= DATABASE (IndexedDB) ================= */
+const openDB = () => new Promise((resolve, reject) => {
+  const r = indexedDB.open('netherite', 1);
+  r.onupgradeneeded = () => {
+    const d = r.result;
+    d.createObjectStore('messages', { keyPath: 'id', autoIncrement: true });
+    d.createObjectStore('knowledge', { keyPath: 'topic' });
+  };
+  r.onsuccess = () => resolve(r.result);
+  r.onerror = () => reject(r.error);
+});
+
+async function run(store, mode, fn) {
+  const d = await openDB();
+  return new Promise((resolve, reject) => {
+    const t = d.transaction(store, mode);
+    const req = fn(t.objectStore(store));
+    t.oncomplete = () => resolve(req && req.result);
+    t.onerror = () => reject(t.error);
+  });
+}
+
+const db = {
+  addMessage: (role, content) => run('messages', 'readwrite', s => s.add({ role, content, ts: Date.now() })),
+  allMessages: () => run('messages', 'readonly', s => s.getAll()),
+  clearMessages: () => run('messages', 'readwrite', s => s.clear()),
+  deleteLast: async () => {
+    const keys = await run('messages', 'readonly', s => s.getAllKeys());
+    if (keys.length) await run('messages', 'readwrite', s => s.delete(keys[keys.length - 1]));
+  },
+  allFacts: () => run('knowledge', 'readonly', s => s.getAll()),
+  putFact: (topic, content) => run('knowledge', 'readwrite', s => s.put({ topic: topic.toLowerCase(), content }))
+};
+
+async function seedKnowledge() {
+  if ((await db.allFacts()).length) return;
+  const facts = [
+    ['netherite', 'Netherite ingot: 4 netherite scraps + 4 gold ingots. Upgrade diamond gear at a smithing table with a netherite upgrade template + 1 netherite ingot. Ancient debris is best found around Y=15 in the Nether.'],
+    ['nether portal', 'Nether portal: obsidian frame at least 4 wide x 5 tall (corners optional), lit with flint and steel.'],
+    ['enchanting', 'Enchanting table: 4 obsidian, 2 diamonds, 1 book. Surround with 15 bookshelves (one block gap) for level 30 enchants.'],
+    ['beacon', 'Beacon: 3 obsidian, 5 glass, 1 nether star, on a pyramid of iron, gold, emerald, diamond or netherite blocks.'],
+    ['redstone', 'Repeater delays signal up to 4 ticks. Comparator reads container fill levels. Observers detect block updates.']
+  ];
+  for (const [t, c] of facts) await db.putFact(t, c);
+}
+
+async function relevantFacts(text) {
+  const words = text.toLowerCase().split(/\W+/).filter(w => w.length > 3);
+  const facts = await db.allFacts();
+  return facts.filter(f => words.some(w => f.topic.includes(w) || f.content.toLowerCase().includes(w))).slice(0, 3);
+}
+
+async function refreshFactCount() {
+  document.getElementById('factCount').textContent = `${(await db.allFacts()).length} facts in the database.`;
+}
+
+/* ================= SETTINGS ================= */
+const settings = {
+  get key() { return localStorage.getItem('netherite_key') || ''; },
+  get backend() { return (localStorage.getItem('netherite_backend') || '').replace(/\/$/, ''); },
+  get web() { return localStorage.getItem('netherite_web') === '1'; }
+};
+
+/* ================= IMAGE MODE DETECTION ================= */
+let imageMode = false;
+const imgToggle = document.getElementById('imgToggle');
+imgToggle.addEventListener('click', () => {
+  imageMode = !imageMode;
+  imgToggle.classList.toggle('on', imageMode);
+  document.getElementById('input').placeholder = imageMode
+    ? 'Describe the Minecraft image you want...'
+    : 'Ask anything Minecraft, or type /image diamond sword';
+});
+
+function detectImage(text) {
+  if (/^\/image\b/i.test(text)) return { isImage: true, text: text.replace(/^\/image\s*/i, '').trim() || 'a diamond sword' };
+  if (imageMode) return { isImage: true, text };
+  const asks = /\b(generate|make|create|draw|design|show me|render)\b[^.?!]*\b(image|picture|pixel art|skin|texture|icon|logo|banner|poster|sprite|drawing|artwork)\b/i;
+  return { isImage: asks.test(text), text };
+}
+
+/* ================= API ================= */
+async function askClaude(userText, isImage) {
+  const wrapped = isImage ? `${IMAGE_RULES}\n\nRequest: ${userText}` : userText;
+
+  if (settings.backend) {
+    let sid = localStorage.getItem('netherite_session');
+    if (!sid) { sid = crypto.randomUUID(); localStorage.setItem('netherite_session', sid); }
+    const res = await fetch(`${settings.backend}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId: sid, message: wrapped })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Backend error');
+    return data.reply;
+  }
+
+  if (!settings.key) throw new Error('Add your Anthropic API key in Settings below, or set a backend URL.');
+
+  // Conversation history comes from the local database (text only, images trimmed)
+  let history = (await db.allMessages()).slice(-20).map(m => ({
+    role: m.role,
+    content: m.content.replace(/```svg[\s\S]*?```/g, '[image]').replace(/<svg[\s\S]*?<\/svg>/g, '[image]')
+  }));
+  history[history.length - 1] = { role: 'user', content: wrapped };
+  while (history.length && history[0].role !== 'user') history.shift();
+
+  const facts = isImage ? [] : await relevantFacts(userText);
+  const system = SYSTEM_BASE + (facts.length ? '\n\nVerified reference notes:\n' + facts.map(f => f.content).join('\n') : '');
+
+  const body = { model: MODEL, max_tokens: isImage ? 6000 : 1500, system, messages: history };
+  if (settings.web && !isImage) body.tools = [{ type: 'web_search_20250305', name: 'web_search' }];
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-api-key': settings.key,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify(body)
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error?.message || 'API error');
+  return data.content.filter(b => b.type === 'text').map(b => b.text).join('\n');
+}
+
+/* ================= SVG HANDLING ================= */
+function cleanSvg(raw) {
+  let s = raw.trim()
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<foreignObject[\s\S]*?<\/foreignObject>/gi, '')
+    .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*')/gi, '')
+    .replace(/(xlink:)?href\s*=\s*("(?!#)[^"]*"|'(?!#)[^']*')/gi, '');
+  const open = s.match(/<svg[^>]*>/i);
+  if (!open) return null;
+  let tag = open[0];
+  const vb = tag.match(/viewBox\s*=\s*"([\d.\s-]+)"/i);
+  let w = 16, h = 16;
+  if (vb) { const p = vb[1].trim().split(/\s+/).map(Number); w = p[2] || 16; h = p[3] || 16; }
+  const px = 512, ph = Math.round(px * h / w);
+  tag = tag.replace(/\s(width|height)\s*=\s*("[^"]*"|'[^']*')/gi, '');
+  tag = tag.replace(/<svg/i, `<svg width="${px}" height="${ph}"`);
+  if (!/xmlns\s*=/.test(tag)) tag = tag.replace(/<svg/i, '<svg xmlns="http://www.w3.org/2000/svg"');
+  return s.replace(open[0], tag);
+}
+
+const svgUri = svg => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+
+function downloadSvg(svg) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+  a.download = 'netherite-ai.svg';
+  a.click();
+}
+
+function downloadPng(svg) {
+  const img = new Image();
+  img.onload = () => {
+    const c = document.createElement('canvas');
+    c.width = 1024; c.height = Math.round(1024 * img.height / img.width);
+    const ctx = c.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(img, 0, 0, c.width, c.height);
+    const a = document.createElement('a');
+    a.href = c.toDataURL('image/png');
+    a.download = 'netherite-ai.png';
+    a.click();
+  };
+  img.src = svgUri(svg);
+}
+
+/* ================= UI ================= */
+const log = document.getElementById('log');
+const input = document.getElementById('input');
+const sendBtn = document.getElementById('send');
+
+function fillMessage(el, text) {
+  el.innerHTML = '';
+  const re = /```svg\s*([\s\S]*?)```|(<svg[\s\S]*?<\/svg>)/gi;
+  let last = 0, m;
+  const addText = t => {
+    if (!t.trim()) return;
+    const d = document.createElement('div');
+    d.className = 'txt';
+    d.textContent = t.trim(); // textContent prevents HTML injection
+    el.appendChild(d);
+  };
+  while ((m = re.exec(text))) {
+    addText(text.slice(last, m.index));
+    last = re.lastIndex;
+    const svg = cleanSvg(m[1] || m[2]);
+    if (!svg) continue;
+    const box = document.createElement('div');
+    box.className = 'imgbox';
+    const img = document.createElement('img'); // rendered as <img>, so SVG scripts can never run
+    img.src = svgUri(svg);
+    img.alt = 'Generated Minecraft image';
+    const btns = document.createElement('div');
+    btns.className = 'imgbtns';
+    const b1 = document.createElement('button'); b1.textContent = 'Download PNG'; b1.onclick = () => downloadPng(svg);
+    const b2 = document.createElement('button'); b2.textContent = 'Download SVG'; b2.onclick = () => downloadSvg(svg);
+    btns.append(b1, b2);
+    box.append(img, btns);
+    el.appendChild(box);
+  }
+  addText(text.slice(last));
+  if (!el.childNodes.length) addText(text);
+}
+
+function addMsg(text, who) {
+  const el = document.createElement('div');
+  el.className = 'msg ' + who;
+  fillMessage(el, text);
+  log.appendChild(el);
+  log.scrollTop = log.scrollHeight;
+  return el;
+}
+
+async function send(raw) {
+  raw = raw.trim();
+  if (!raw) return;
+  const { isImage, text } = detectImage(raw);
+  addMsg(isImage ? '🎨 ' + text : text, 'user');
+  input.value = '';
+  sendBtn.disabled = true;
+  const thinking = addMsg(isImage ? 'Crafting your pixel art...' : 'Mining for an answer...', 'ai');
+  try {
+    await db.addMessage('user', text);
+    const reply = await askClaude(text, isImage);
+    fillMessage(thinking, reply);
+    await db.addMessage('assistant', reply);
+  } catch (err) {
+    fillMessage(thinking, 'Error: ' + err.message);
+    await db.deleteLast(); // keep stored history alternating user/assistant
+  }
+  sendBtn.disabled = false;
+  log.scrollTop = log.scrollHeight;
+}
+
+document.getElementById('form').addEventListener('submit', e => { e.preventDefault(); send(input.value); });
+
+document.getElementById('clear').addEventListener('click', async () => {
+  await db.clearMessages();
+  log.innerHTML = '';
+  addMsg('Chat cleared. What are we building next?', 'ai');
+});
+
+document.getElementById('saveSettings').addEventListener('click', () => {
+  const k = document.getElementById('apiKey').value.trim();
+  if (k) localStorage.setItem('netherite_key', k);
+  localStorage.setItem('netherite_backend', document.getElementById('backendUrl').value.trim());
+  localStorage.setItem('netherite_web', document.getElementById('webSearch').checked ? '1' : '0');
+  document.getElementById('apiKey').value = '';
+  alert('Settings saved.');
+});
+
+document.getElementById('addFact').addEventListener('click', async () => {
+  const t = document.getElementById('factTopic').value.trim();
+  const c = document.getElementById('factText').value.trim();
+  if (!t || !c) return;
+  await db.putFact(t, c);
+  document.getElementById('factTopic').value = '';
+  document.getElementById('factText').value = '';
+  refreshFactCount();
+});
+
+['How do I get netherite fast?', 'Best enchantments for a pickaxe', 'How do I set up a Paper server?',
+ '/image a glowing netherite pickaxe', '/image a creeper face', '/image a pixel art nether fortress scene']
+  .forEach(q => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = q;
+    b.onclick = () => send(q);
+    document.getElementById('chips').appendChild(b);
+  });
+
+/* ================= INIT ================= */
+(async function init() {
+  document.getElementById('backendUrl').value = settings.backend;
+  document.getElementById('webSearch').checked = settings.web;
+  await seedKnowledge();
+  refreshFactCount();
+  const rows = await db.allMessages();
+  if (!rows.length) addMsg("Welcome, miner! I'm Netherite AI. Ask me anything about Minecraft, or tap 🎨 / type /image to generate pixel art.", 'ai');
+  else rows.forEach(r => addMsg(r.content, r.role === 'user' ? 'user' : 'ai'));
+})();
+</script>
+</body>
+</html>

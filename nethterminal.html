@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NETH TERMINAL</title>
+    <script src="https://jsdelivr.net"></script>
+    <style>
+        :root { --bg: #0a0b10; --panel: #12131a; --green: #00ff66; --cyan: #00f0ff; --magenta: #ff0055; --text: #cdffd8; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: monospace; }
+        body { background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        header { background: var(--panel); border-bottom: 2px solid var(--cyan); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 0 15px rgba(0,240,255,0.2); }
+        .workspace { display: flex; flex: 1; height: calc(100vh - 50px); }
+        .editors-panel { width: 50%; display: flex; flex-direction: column; border-right: 2px solid #1f2430; }
+        .tabs { display: flex; background: var(--panel); }
+        .tab-btn { background: none; border: none; color: #667; padding: 12px; cursor: pointer; font-size: 0.9rem; flex: 1; text-align: center; }
+        .tab-btn.active { color: var(--green); background: var(--bg); border-bottom: 2px solid var(--green); text-shadow: 0 0 5px var(--green); }
+        .editor-container { flex: 1; display: none; }
+        .editor-container.active { display: block; }
+        textarea { width: 100%; height: 100%; background: var(--bg); color: var(--text); border: none; padding: 15px; font-size: 1rem; resize: none; outline: none; }
+        .output-panel { width: 50%; display: flex; flex-direction: column; }
+        .panel-header { background: var(--panel); padding: 8px 15px; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; color: var(--magenta); }
+        .run-btn { background: transparent; border: 1px solid var(--green); color: var(--green); padding: 2px 10px; cursor: pointer; display: none; }
+        .run-btn:hover { background: var(--green); color: var(--bg); box-shadow: 0 0 8px var(--green); }
+        iframe { flex: 1; background: #fff; border: none; }
+        .console-area { height: 40%; background: #050608; border-top: 2px solid #1f2430; display: flex; flex-direction: column; }
+        .console-log { flex: 1; padding: 12px; font-size: 0.85rem; overflow-y: auto; color: #8af3ff; }
+        .line { margin-bottom: 4px; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h2 style="color: var(--cyan); font-size: 1.2rem; letter-spacing: 1px;">NETH_TERMINAL // <span id="mode">WEB</span></h2>
+        <div style="font-size: 0.8rem; color: var(--green);">SYS_ONLINE</div>
+    </header>
+
+    <div class="workspace">
+        <div class="editors-panel">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('html')">HTML</button>
+                <button class="tab-btn" onclick="switchTab('css')">CSS</button>
+                <button class="tab-btn" onclick="switchTab('js')">JS</button>
+                <button class="tab-btn" onclick="switchTab('py')">PYTHON</button>
+            </div>
+            <div id="html-editor" class="editor-container active"><textarea id="html-code" oninput="updateWeb()" placeholder="<h1>Hello Cyber World</h1>"><h1>Hello Cyber World</h1></textarea></div>
+            <div id="css-editor" class="editor-container"><textarea id="css-code" oninput="updateWeb()" placeholder="body { background: #111; color: #00ff66; text-align: center; }">body { background: #111; color: #00ff66; text-align: center; font-family: sans-serif; padding-top: 30px; }</textarea></div>
+            <div id="js-editor" class="editor-container"><textarea id="js-code" oninput="updateWeb()" placeholder="console.log('Neth Terminal Web Engine Initialized');">console.log('Neth Terminal Web Engine Initialized');</textarea></div>
+            <div id="py-editor" class="editor-container"><textarea id="py-code" placeholder="for i in range(3):&#10;    print(f'Mainframe bypassed node {i}...')">for i in range(3):
+    print(f'Mainframe bypassed node {i}...')</textarea></div>
+        </div>
+
+        <div class="output-panel">
+            <div class="panel-header">
+                <span>VIEWPORT</span>
+                <button id="run-btn" class="run-btn" onclick="runPython()">EXECUTE PYTHON</button>
+            </div>
+            <iframe id="preview"></iframe>
+            <div class="console-area">
+                <div class="panel-header" style="color: var(--green);"><span>CONSOLE OUTPUT</span><span style="cursor:pointer;" onclick="document.getElementById('log').innerHTML=''">[CLEAR]</span></div>
+                <div class="console-log" id="log"><div class="line">> System loaded. Ready code injection...</div></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let pyodide = null, pyLoading = false;
+
+        function printLog(msg, type = 'info') {
+            const out = document.getElementById('log');
+            const div = document.createElement('div');
+            div.className = 'line';
+            if (type === 'error') div.style.color = 'var(--magenta)';
+            if (type === 'success') div.style.color = 'var(--green)';
+            div.textContent = `> ${msg}`;
+            out.appendChild(div);
+            out.scrollTop = out.scrollHeight;
+        }
+
+        function switchTab(lang) {
+            document.querySelectorAll('.tab-btn').forEach((b) => b.classList.toggle('active', b.innerText.toLowerCase() === lang || (b.innerText === 'PYTHON' && lang === 'py')));
+            document.querySelectorAll('.editor-container').forEach(c => c.classList.remove('active'));
+            document.getElementById(`${lang}-editor`).classList.add('active');
+            
+            const isPy = lang === 'py';
+            document.getElementById('mode').innerText = isPy ? 'PYTHON' : 'WEB';
+            document.getElementById('run-btn').style.display = isPy ? 'block' : 'none';
+            
+            if (isPy && !pyodide && !pyLoading) {
+                pyLoading = true;
+                printLog("Loading Python WebAssembly runtime package files...");
+                loadPyodide({ indexURL: "https://jsdelivr.net" }).then(p => { 
+                    pyodide = p; 
+                    printLog("Python Compiler online and parsed successfully.", "success"); 
+                }).catch(err => {
+                    printLog("Runtime load execution fault: " + err.message, "error");
+                    pyLoading = false;
+                });
+            }
+        }
+
+        function updateWeb() {
+            const html = document.getElementById('html-code').value;
+            const css = document.getElementById('css-code').value;
+            const js = document.getElementById('js-code').value;
+            document.getElementById('preview').srcdoc = `
+                <html><head><style>${css}</style></head><body>${html}
+                <script>
+                    console.log = (...args) => window.parent.postMessage({t:'LOG', d:args.join(' ')}, '*');
+                    window.onerror = (m) => window.parent.postMessage({t:'ERR', d:m}, '*');
+                    try { ${js} } catch(e) { window.parent.postMessage({t:'ERR', d:e.message}, '*'); }
+                <\/script></body></html>`;
+        }
+
+        window.addEventListener('message', e => {
+            if (e.data.t === 'LOG') printLog(e.data.d);
+            if (e.data.t === 'ERR') printLog(e.data.t + ': ' + e.data.d, 'error');
+        });
+
+        async function runPython() {
+            if (!pyodide) return printLog("Compiler core still engaging package bundles...", "error");
+            printLog("Running python script operational sequences...", "info");
+            pyodide.setStdout({ batched: (t) => printLog(t, 'success') });
+            pyodide.setStderr({ batched: (t) => printLog(t, 'error') });
+            try { await pyodide.runPythonAsync(document.getElementById('py-code').value); } 
+            catch (err) { printLog(err.message, "error"); }
+        }
+
+        // Initialize with content
+        updateWeb();
+    </script>
+</body>
+</html>
